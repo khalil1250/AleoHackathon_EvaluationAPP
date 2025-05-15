@@ -1,68 +1,62 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" version="27.0.5">
   <diagram name="Page-1" id="X9Ge4oZA_UkVIi6yfmRD">
-    <mxGraphModel dx="786" dy="417" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1572" dy="834" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-3" value="souhaite enregistrer de la donnée (exp : indice de performance global)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="320" y="30" width="120" height="80" as="geometry" />
+        <mxCell id="aIzoLomIcetMJ4DEpjG2-3" value="le vérifieur doit être autorisé par l&#39;application (administrateur) et possiblement par l&#39;entreprise qu&#39;elle souhaite vérifier" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="100" width="130" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-4" value="entreprise" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="550" y="30" width="120" height="80" as="geometry" />
+        <mxCell id="aIzoLomIcetMJ4DEpjG2-4" value="ajout d&#39;un vérifieur" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="630" y="10" width="120" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-5" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+        <mxCell id="aIzoLomIcetMJ4DEpjG2-5" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="540" y="69.5" as="sourcePoint" />
-            <mxPoint x="450" y="69.5" as="targetPoint" />
+            <mxPoint x="337" y="49.370000000000005" as="sourcePoint" />
+            <mxPoint x="247" y="49.370000000000005" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-6" value="la donnée doit alors être validée par un vérifieur spécifié par l&#39;entreprise et accrédité sur l&#39;application (exp : entreprise d&#39;audit)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="270" y="180" width="160" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-7" value="si validée, la donnée est refactorisée avec un ensemble de métadonnées et est alors encryptée à l&#39;aide d&#39;une clé générée au hasard puis stockée sur un server. La clé est alors stockée sur la blockchain en privé sous forme de nft -&amp;gt; seul l&#39;entreprise, les personnes que cette dernière a accrédité et le vérifieur ont accès à cette clé" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="510" y="220" width="290" height="150" as="geometry" />
-        </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-8" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="aIzoLomIcetMJ4DEpjG2-3">
+        <mxCell id="aIzoLomIcetMJ4DEpjG2-8" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="200" y="90" as="sourcePoint" />
-            <mxPoint x="240" y="70" as="targetPoint" />
+            <mxPoint x="160" y="120" as="sourcePoint" />
+            <mxPoint x="160" y="190" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-9" value="selection une catégorie (si elle souhaite ajouter en append) ou en crée une&lt;div&gt;La catégorie a une utilité sur l&#39;application pour s&#39;y retrouver&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="20" width="170" height="90" as="geometry" />
+        <mxCell id="aIzoLomIcetMJ4DEpjG2-9" value="l&#39;application doit considérer que le vérifieur est digne de confiance pour le validé (autorité d&#39;état, institue publique, entreprise d&#39;audit, etc)" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="85" y="190" width="170" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-10" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+        <mxCell id="aIzoLomIcetMJ4DEpjG2-10" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="140" y="120" as="sourcePoint" />
-            <mxPoint x="130" y="180" as="targetPoint" />
+            <mxPoint x="255" y="280" as="sourcePoint" />
+            <mxPoint x="355" y="350" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-11" value="entre la donnée (peut etre un fichier texte, xml, etc) puis envoie" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="180" width="120" height="80" as="geometry" />
+        <mxCell id="aIzoLomIcetMJ4DEpjG2-11" value="si validée, l&#39;entité se voit recevoir des clés &#39;authentification (un compte est créé) et est considéré comme une vérifieur sur la blockchain. Sa clé est alors ajouté dans la liste des vérifieurs de/des l&#39;entreprise(s) concernée(s)&amp;nbsp;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="330" y="350" width="210" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-12" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+        <mxCell id="tC52iORBs20Dp0UpYFBa-1" value="le vérifieur est proposé par l&#39;entreprise ou emmet une candidature spontanée" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="10" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="tC52iORBs20Dp0UpYFBa-5" value="si c&#39;est l&#39;entreprise qui propose alors elle consent à être vérifié par ce vérifieur" style="ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="590" width="170" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="tC52iORBs20Dp0UpYFBa-6" value="si c&#39;est une candidature spontanée, cela concerne plutôt les laboratoires de recherche, les institutions publique (banque centrale, labo, Etat, etc)&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Note importante : un vérifieur doit lui meme être enregistrée comme vérifié. Cela permet de pouvoir être noté par d&#39;autres vérifieurs afin que le publique puisse d&#39;assurer de la fiabilité d&#39;un vérifieur. Cependant, cela correspondra à 2 comptes distincts qui ont des interactions spécifiques avec l&#39;application. Un compte ne peut donc avoir qu&#39;un seul rôle.&lt;/div&gt;" style="ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="540" width="300" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="tC52iORBs20Dp0UpYFBa-7" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="200" y="220" as="sourcePoint" />
-            <mxPoint x="270" y="220" as="targetPoint" />
+            <mxPoint x="280" y="234.29" as="sourcePoint" />
+            <mxPoint x="400" y="234.29" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-14" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="440" y="230" as="sourcePoint" />
-            <mxPoint x="517.6264226208716" y="261.59248829951787" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="490" y="250" />
-            </Array>
-          </mxGeometry>
+        <mxCell id="tC52iORBs20Dp0UpYFBa-8" value="si c&#39;est un nouveau vérifieur, il est inscrit sur la blockchain et une compte entreprise/vérifié lui est aussi créé avec sa propre clé etc -&amp;gt; cela lui est notifié par mail et envoyé" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="170" width="220" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-15" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+        <mxCell id="tC52iORBs20Dp0UpYFBa-9" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="420" y="190" as="sourcePoint" />
-            <mxPoint x="460" y="160" as="targetPoint" />
+            <mxPoint x="592" y="49.41" as="sourcePoint" />
+            <mxPoint x="512" y="49.41" as="targetPoint" />
           </mxGeometry>
-        </mxCell>
-        <mxCell id="aIzoLomIcetMJ4DEpjG2-16" value="si rejetée, l&#39;entreprise est notifiée avec une explication et les coordonnées de contact du vérifieur" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
-          <mxGeometry x="470" y="100" width="120" height="120" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
