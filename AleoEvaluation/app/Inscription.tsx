@@ -1,91 +1,60 @@
+// app/Inscription.tsx
 import bcrypt from 'bcryptjs';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Animated,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { Animated, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../lib/supabase';
 
-export default function Index() {
-  const router = useRouter();
+export default function Inscription() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 4000,
-          useNativeDriver: false
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 4000,
-          useNativeDriver: false
-        })
+        Animated.timing(fadeAnim, { toValue: 1, duration: 4000, useNativeDriver: false }),
+        Animated.timing(fadeAnim, { toValue: 0, duration: 4000, useNativeDriver: false })
       ])
     ).start();
   }, []);
 
-  const handleLogin = async () => {
+  const handleSignUp = async () => {
     if (!username || !password) {
-      window.alert('Erreur : Veuillez remplir tous les champs.');
+      alert('Veuillez remplir tous les champs.');
       return;
     }
-     try {
-    const { data, error } = await supabase
-  .from('users')
-  .select('*')
-  .eq('username', username.trim())
-  .single();
 
-if (error || !data) {
-  alert('Utilisateur introuvable');
-  return;
-}
+    try {
+      const password_hash = await bcrypt.hash(password, 10);
+      const { error } = await supabase.from('users').insert([
+        { username: username.trim(), password_hash }
+      ]);
 
-const isMatch = await bcrypt.compare(password, data.password_hash);
+      if (error) {
+        alert('Erreur lors de la création du compte.');
+        return;
+      }
 
-if (!isMatch) {
-  alert('Mot de passe incorrect');
-  return;
-}
-
-// Connexion réussie
-router.push('/Acceuil');
-
-  } catch (e) {
-    console.error(e);
-    window.alert('Erreur : Impossible de vérifier les identifiants.');
-  }
+      alert("Votre compte a été créé. Aller dans l'onglet compte pour compléter votre profile.");
+      router.push('/'); // retourne à la page de connexion
+    } catch (e) {
+      console.error(e);
+      alert('Erreur : Impossible de créer un compte.');
+    }
   };
-  
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Dégradé 1 */}
       <LinearGradient
         colors={['#1F3B73', '#2C5364', '#0F2027']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
-      {/* Dégradé 2 superposé, animé */}
-      <Animated.View
-        style={[
-          StyleSheet.absoluteFill,
-          { opacity: fadeAnim }
-        ]}
-      >
+      <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim }]}>
         <LinearGradient
           colors={['#0F2027', '#1F3B73', '#2C5364']}
           start={{ x: 0, y: 0 }}
@@ -94,18 +63,16 @@ router.push('/Acceuil');
         />
       </Animated.View>
 
-      {/* Contenu */}
       <View style={styles.content}>
         <Image
           source={require('../assets/images/ConnexionIcon.png')}
           style={styles.logo}
         />
-        <Text style={styles.title}>Bienvenue !</Text>
-        <Text style={styles.subtitle}>Votre aventure commence ici.</Text>
+        <Text style={styles.title}>Créer un compte</Text>
 
         <TextInput
           style={styles.input}
-          placeholder="👤 ID (mail, username, key)"
+          placeholder="👤 Nom d'utilisateur"
           placeholderTextColor="#ccc"
           value={username}
           onChangeText={setUsername}
@@ -119,14 +86,9 @@ router.push('/Acceuil');
           onChangeText={setPassword}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Se connecter</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+          <Text style={styles.buttonText}>S'inscrire</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity style={{ marginTop: 10 }} onPress={() => router.push('./Inscription')}>
-        <Text style={{ color: '#fff', textDecorationLine: 'underline' }}> Créer un compte </Text>
-        </TouchableOpacity>
-
       </View>
     </View>
   );
@@ -151,12 +113,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 5
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#dddddd',
-    marginBottom: 30
+    marginBottom: 20
   },
   input: {
     width: '100%',
