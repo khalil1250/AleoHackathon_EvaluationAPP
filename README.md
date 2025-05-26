@@ -1,1 +1,0 @@
-# AleoHackathon_EvaluationAPP
