@@ -1,9 +1,10 @@
-import { Ionicons } from '@expo/vector-icons'; // import de l'icône
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
   Animated,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -35,6 +36,13 @@ export default function Acceuil() {
     router.push('/');
   };
 
+  const buttons = [
+    { title: 'Send Info', onPress: () => {} },
+    { title: 'See Info', onPress: () => {} },
+    { title: 'Evaluations', onPress: () => {} },
+    { title: 'Account', onPress: () => {} },
+  ];
+
   return (
     <View style={{ flex: 1 }}>
       {/* Dégradé principal */}
@@ -44,6 +52,7 @@ export default function Acceuil() {
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
+
       {/* Dégradé animé */}
       <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim }]}>
         <LinearGradient
@@ -54,15 +63,38 @@ export default function Acceuil() {
         />
       </Animated.View>
 
-      {/* Bouton de déconnexion en haut à droite */}
+      {/* Bouton logout */}
       <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
         <Ionicons name="log-out-outline" size={24} color="#fff" />
       </TouchableOpacity>
 
-      {/* Contenu principal */}
+      {/* Contenu principal avec les boutons */}
       <View style={styles.content}>
-        <Text style={styles.title}>Bienvenue sur Aleo !</Text>
-        <Text style={styles.subtitle}>Vous êtes connecté 🎉</Text>
+        {buttons.map((btn, idx) => (
+          <Pressable
+            key={idx}
+            onPress={btn.onPress}
+            style={({ pressed }) => [
+              styles.mainButton,
+              pressed && styles.mainButtonPressed,
+            ]}
+          >
+            <Text style={styles.mainButtonText}>{btn.title}</Text>
+          </Pressable>
+        ))}
+      </View>
+
+      {/* Bouton "Parameters" en bas à droite */}
+      <View style={styles.bottomRight}>
+        <Pressable
+          onPress={() => {}}
+          style={({ pressed }) => [
+            styles.mainButton,
+            pressed && styles.mainButtonPressed,
+          ]}
+        >
+          <Text style={styles.mainButtonText}>Parameters</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -71,8 +103,9 @@ export default function Acceuil() {
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
     paddingHorizontal: 20,
   },
   logoutButton: {
@@ -88,15 +121,26 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     zIndex: 10,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 10,
+  mainButton: {
+    width: 200,
+    paddingVertical: 14,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ffffff66',
   },
-  subtitle: {
-    fontSize: 18,
-    color: '#dddddd',
-    marginBottom: 30,
+  mainButtonPressed: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  mainButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  bottomRight: {
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
   },
 });
