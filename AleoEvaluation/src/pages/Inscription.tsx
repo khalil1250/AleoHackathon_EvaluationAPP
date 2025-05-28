@@ -1,7 +1,9 @@
 import bcrypt from 'bcryptjs';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Account } from '@provablehq/sdk';
 import './css/Inscription.css';
+import {deriveKey, encrypt, decrypt} from "../encrypt_decrypt.ts";
 import { supabase } from '../lib/supabase';
 import ConnexionIcon from '../assets/images/ConnexionIcon.png';
 
@@ -31,15 +33,54 @@ export default function Inscription() {
     }
 
     try {
-      const password_hash = await bcrypt.hash(password, 10);
-      const { error } = await supabase.from('users').insert([
+      const account = new Account();
+      const privateKey = account.privateKey().to_string();
+      const viewKey = account.viewKey().to_string();
+      const address = account.address().to_string();
+
+      const password_hash : string = await bcrypt.hash(password, 10);
+
+      const key = await deriveKey(username, password_hash);
+      const encryptedPrivateKey = await encrypt(privateKey, key);
+      const encryptedViewKey = await encrypt(viewKey, key);
+      const encryptedAddress = await encrypt(address, key);
+
+      console.log('Encrypted keys:', { encryptedPrivateKey, encryptedViewKey, encryptedAddress });
+/*
+      const decryptedPrivateKey = await decrypt(encryptedPrivateKey, key);
+      const decryptedViewKey = await decrypt(encryptedViewKey, key);
+      const decryptedAddress = await decrypt(encryptedAddress, key);
+
+      console.log('Decrypted keys:', { decryptedPrivateKey, decryptedViewKey, decryptedAddress });
+*/
+      
+      
+      const { error:error1 } = await supabase.from('users').insert([
         { username: username.trim(), password_hash }
       ]);
 
-      if (error) {
-        alert('Erreur lors de la création du compte.');
+
+      if (error1) {
+        alert('Erreur lors de la création du compte user.');
         return;
       }
+
+      const { data: existingUser } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username.trim());
+
+      console.log(existingUser); // doit contenir un élément
+
+      const {error:error2} = await supabase.from('aleo_key').insert([
+        { username: username.trim(), private_key : encryptedPrivateKey, view_key:encryptedViewKey, address:encryptedAddress }
+      ]);
+      if (error2) {
+        alert('Erreur lors de la création du compte aleo.');
+        return;
+      }
+
+      
 
       alert("Votre compte a été créé. Aller dans l'onglet compte pour compléter votre profil.");
       navigate('/');
