@@ -65,13 +65,6 @@ export default function Inscription() {
         return;
       }
 
-      const { data: existingUser } = await supabase
-      .from('users')
-      .select('*')
-      .eq('username', username.trim());
-
-      console.log(existingUser); // doit contenir un élément
-
       const {error:error2} = await supabase.from('aleo_key').insert([
         { username: username.trim(), private_key : encryptedPrivateKey, view_key:encryptedViewKey, address:encryptedAddress }
       ]);
