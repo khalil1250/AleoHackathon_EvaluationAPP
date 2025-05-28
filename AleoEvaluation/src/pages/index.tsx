@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import './css/index.css';
 import { supabase } from '../lib/supabase';
+import { session } from '../lib/session';
 import ConnexionIcon from '../assets/images/ConnexionIcon.png';
-
 export default function Index() {
   const navigate = useNavigate();
   const fadeRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,8 @@ export default function Index() {
         alert('Mot de passe incorrect');
         return;
       }
-
+      session.username = username.trim();
+      session.passwordHash = data.password_hash;
       navigate('/Acceuil');
     } catch (e) {
       console.error(e);

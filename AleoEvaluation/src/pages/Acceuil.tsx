@@ -25,7 +25,7 @@ export default function Accueil() {
   };
 
   const buttons = [
-    { title: 'Send Info', onClick: () => {} },
+    { title: 'Send Info', onClick: () => {navigate("/SendInfo")} },
     { title: 'See Info', onClick: () => {} },
     { title: 'Evaluations', onClick: () => {} },
     { title: 'Account', onClick: () => {} },
