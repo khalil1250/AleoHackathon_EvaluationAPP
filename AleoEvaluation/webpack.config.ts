@@ -8,7 +8,7 @@ import path from "path";
 const appConfig = {
   mode: "production",
   entry: {
-    index: "./src/main.tsx",
+    index: "./src/pages/index.tsx",
   },
   output: {
     path: path.resolve("dist"),

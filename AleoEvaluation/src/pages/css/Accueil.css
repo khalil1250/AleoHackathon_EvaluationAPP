@@ -1,0 +1,82 @@
+body, html, #root {
+  margin: 0;
+  height: 100%;
+  background: #000;
+  /*overflow: hidden;*/
+  font-family: sans-serif;
+}
+
+.container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.gradient-layer1, .gradient-layer2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.gradient-layer1 {
+  background: linear-gradient(135deg, #1F3B73, #2C5364, #0F2027);
+}
+
+.gradient-layer2 {
+  background: linear-gradient(135deg, #0F2027, #1F3B73, #2C5364);
+  opacity: 0;
+  transition: opacity 4s ease-in-out;
+}
+
+.logout-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #e29834;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.content {
+  flex: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.main-button {
+  width: 200px;
+  padding: 14px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid #ffffff66;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.main-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.bottom-right {
+  position: absolute;
+  bottom: 30px;
+  right: 20px;
+  z-index: 1;
+}

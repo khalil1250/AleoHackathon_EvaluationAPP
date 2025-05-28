@@ -13,9 +13,13 @@
   },
   "dependencies": {
     "@provablehq/sdk": "^0.8.8",
+    "@supabase/supabase-js": "^2.49.8",
+    "bcryptjs": "^3.0.2",
     "comlink": "^4.4.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.7",
