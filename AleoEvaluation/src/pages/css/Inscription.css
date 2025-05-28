@@ -1,0 +1,80 @@
+body, html, #root {
+  height: 100%;
+  margin: 0;
+  font-family: sans-serif;
+  background: #000;
+  overflow: hidden;
+}
+
+.container {
+  position: relative;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gradient-layer1, .gradient-layer2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.gradient-layer1 {
+  background: linear-gradient(135deg, #1F3B73, #2C5364, #0F2027);
+}
+
+.gradient-layer2 {
+  background: linear-gradient(135deg, #0F2027, #1F3B73, #2C5364);
+  opacity: 0;
+  transition: opacity 4s ease-in-out;
+}
+
+.content {
+  z-index: 1;
+  text-align: center;
+  padding: 20px;
+  color: #fff;
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 30px;
+  object-fit: contain;
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid #ccc;
+  color: #fff;
+  outline: none;
+}
+
+.button {
+  background-color: #e29834;
+  padding: 12px 40px;
+  border: none;
+  border-radius: 25px;
+  margin-top: 10px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+}
