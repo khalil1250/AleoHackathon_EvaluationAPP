@@ -1,0 +1,77 @@
+@import './Accueil.css'; /* hérite des styles de Acceuil */
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* centrer verticalement */
+  min-height: 100vh;
+  padding-top: 100px; /* pour éviter d'être caché sous les boutons fixes */
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #e29834;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.drop-area {
+  flex: 1;
+  z-index: 1;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+  padding: 60px;
+  text-align: center;
+  border: 2px dashed #ffffff66;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 18px;
+  transition: background-color 0.2s ease;
+}
+
+.drop-area.active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.drop-label {
+  cursor: pointer;
+}
+.verifieur-input-container {
+  z-index: 3; /* ou un nombre supérieur aux gradients */
+  position: relative; /* obligatoire pour que z-index s'applique */
+  margin: 20px auto;
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+}
+
+.verifieur-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #fff; /* ou #000 selon ton fond */
+}
+
+.verifieur-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+
