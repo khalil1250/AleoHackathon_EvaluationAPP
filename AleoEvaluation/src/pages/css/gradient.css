@@ -1,0 +1,19 @@
+.gradient-layer1,
+.gradient-layer2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.gradient-layer1 {
+  background: linear-gradient(135deg, #1f3b73, #2c5364, #0f2027);
+}
+
+.gradient-layer2 {
+  background: linear-gradient(135deg, #0f2027, #1f3b73, #2c5364);
+  opacity: 0;
+  transition: opacity 4s ease-in-out;
+}

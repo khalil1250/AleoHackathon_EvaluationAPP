@@ -1,12 +1,12 @@
-body, html, #root {
-  height: 100%;
+.index-page {
+  height: 100vh;
   margin: 0;
   font-family: sans-serif;
   background: #000;
   overflow: hidden;
 }
 
-.container {
+.index-page .container {
   position: relative;
   height: 100%;
   display: flex;
@@ -14,7 +14,8 @@ body, html, #root {
   align-items: center;
 }
 
-.gradient-layer1, .gradient-layer2 {
+.index-page .gradient-layer1,
+.index-page .gradient-layer2 {
   position: absolute;
   top: 0;
   left: 0;
@@ -23,24 +24,24 @@ body, html, #root {
   z-index: 0;
 }
 
-.gradient-layer1 {
-  background: linear-gradient(135deg, #1F3B73, #2C5364, #0F2027);
+.index-page .gradient-layer1 {
+  background: linear-gradient(135deg, #1f3b73, #2c5364, #0f2027);
 }
 
-.gradient-layer2 {
-  background: linear-gradient(135deg, #0F2027, #1F3B73, #2C5364);
+.index-page .gradient-layer2 {
+  background: linear-gradient(135deg, #0f2027, #1f3b73, #2c5364);
   opacity: 0;
   transition: opacity 4s ease-in-out;
 }
 
-.content {
+.index-page .content {
   z-index: 1;
   text-align: center;
   padding: 20px;
   color: #fff;
 }
 
-.logo {
+.index-page .logo {
   width: 120px;
   height: 120px;
   margin-bottom: 30px;
@@ -49,19 +50,19 @@ body, html, #root {
   background-color: #fff;
 }
 
-.title {
+.index-page .title {
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.subtitle {
+.index-page .subtitle {
   font-size: 16px;
   color: #dddddd;
   margin-bottom: 30px;
 }
 
-.input {
+.index-page .input {
   width: 100%;
   max-width: 400px;
   padding: 12px;
@@ -73,7 +74,7 @@ body, html, #root {
   outline: none;
 }
 
-.button {
+.index-page .button {
   background-color: #e29834;
   padding: 12px 40px;
   border: none;
@@ -85,7 +86,7 @@ body, html, #root {
   box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
 }
 
-.link {
+.index-page .link {
   margin-top: 10px;
   color: #fff;
   text-decoration: underline;

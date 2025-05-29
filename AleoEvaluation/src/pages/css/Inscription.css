@@ -1,20 +1,16 @@
-body, html, #root {
-  height: 100%;
-  margin: 0;
-  font-family: sans-serif;
-  background: #000;
-  overflow: hidden;
-}
-
-.container {
+.inscription-container {
   position: relative;
-  height: 100%;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: #000;
+  overflow: hidden;
+  font-family: sans-serif;
 }
 
-.gradient-layer1, .gradient-layer2 {
+.inscription-gradient-layer1,
+.inscription-gradient-layer2 {
   position: absolute;
   top: 0;
   left: 0;
@@ -23,24 +19,24 @@ body, html, #root {
   z-index: 0;
 }
 
-.gradient-layer1 {
+.inscription-gradient-layer1 {
   background: linear-gradient(135deg, #1F3B73, #2C5364, #0F2027);
 }
 
-.gradient-layer2 {
+.inscription-gradient-layer2 {
   background: linear-gradient(135deg, #0F2027, #1F3B73, #2C5364);
   opacity: 0;
   transition: opacity 4s ease-in-out;
 }
 
-.content {
+.inscription-content {
   z-index: 1;
   text-align: center;
   padding: 20px;
   color: #fff;
 }
 
-.logo {
+.inscription-logo {
   width: 120px;
   height: 120px;
   margin-bottom: 30px;
@@ -49,13 +45,13 @@ body, html, #root {
   background-color: #fff;
 }
 
-.title {
+.inscription-title {
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
-.input {
+.inscription-input {
   width: 100%;
   max-width: 400px;
   padding: 12px;
@@ -67,7 +63,7 @@ body, html, #root {
   outline: none;
 }
 
-.button {
+.inscription-button {
   background-color: #e29834;
   padding: 12px 40px;
   border: none;
@@ -77,4 +73,20 @@ body, html, #root {
   font-weight: bold;
   cursor: pointer;
   box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  background-color: #e29834;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+}
+.back-button {
+  left: 20px;
 }

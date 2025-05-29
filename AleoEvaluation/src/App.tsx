@@ -4,15 +4,17 @@ import Index from './pages/index';
 import Acceuil from './pages/Acceuil';
 import Inscription from './pages/Inscription';
 import SendInfo from './pages/SendInfo';
+import SeeInfo from './pages/SeeInfo';
 
 export default function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/Acceuil" element={<Acceuil />} />
         <Route path="/Inscription" element={<Inscription />} />
-        <Route path="/SendInfo" element={<SendInfo />} />
+        <Route path="/Acceuil" element={<Acceuil />} />
+        <Route path="/Acceuil/SendInfo" element={<SendInfo />} />
+        <Route path="/Acceuil/SeeInfo" element={<SeeInfo />} />
       </Routes>
     </Router>
   );
