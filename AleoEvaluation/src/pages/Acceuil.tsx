@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/Accueil.css';
+import GradientBackground from './css/GradientBackground';
 import { IoLogOutOutline } from 'react-icons/io5'; // Ionicons équivalent
 
 export default function Accueil() {
@@ -25,16 +26,16 @@ export default function Accueil() {
   };
 
   const buttons = [
-    { title: 'Send Info', onClick: () => {navigate("/SendInfo")} },
-    { title: 'See Info', onClick: () => {} },
+    { title: 'Send Info', onClick: () => {navigate("SendInfo")} },
+    { title: 'See Info', onClick: () => {navigate("SeeInfo")} },
     { title: 'Evaluations', onClick: () => {} },
     { title: 'Account', onClick: () => {} },
   ];
 
   return (
+      <div className="accueil-page">
     <div className="container">
-      <div className="gradient-layer1" />
-      <div className="gradient-layer2" ref={fadeRef} />
+      <GradientBackground />
 
       <button className="logout-button" onClick={handleLogout}>
         <IoLogOutOutline size={24} />
@@ -52,5 +53,6 @@ export default function Accueil() {
         <button className="main-button">Parameters</button>
       </div>
     </div>
+  </div>
   );
 }

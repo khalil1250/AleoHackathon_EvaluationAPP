@@ -5,6 +5,8 @@ import './css/index.css';
 import { supabase } from '../lib/supabase';
 import { session } from '../lib/session';
 import ConnexionIcon from '../assets/images/ConnexionIcon.png';
+import GradientBackground from './css/GradientBackground';
+
 export default function Index() {
   const navigate = useNavigate();
   const fadeRef = useRef<HTMLDivElement>(null);
@@ -58,9 +60,10 @@ export default function Index() {
   };
 
   return (
+      <div className="index-page">
+        <GradientBackground />
     <div className="container">
-      <div className="gradient-layer1" />
-      <div className="gradient-layer2" ref={fadeRef} />
+      
 
       <div className="content">
         <img src={ConnexionIcon} alt="Logo" className="logo" />
@@ -90,5 +93,6 @@ export default function Index() {
         </p>
       </div>
     </div>
+  </div>
   );
 }

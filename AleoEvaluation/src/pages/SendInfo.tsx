@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoLogOutOutline, IoArrowBackOutline } from 'react-icons/io5';
-import './css/send_info.css';
+import './css/SendInfo.css';
+import GradientBackground from './css/GradientBackground';
 import { session } from '../lib/session';
 import { supabase } from '../lib/supabase';
 import { encryptWithViewKey, deriveKey, decrypt } from '../encrypt_decrypt';
@@ -165,8 +166,7 @@ export default function SendInfo() {
 
   return (
     <div className="container">
-      <div className="gradient-layer1" />
-      <div className="gradient-layer2" ref={fadeRef} />
+      <GradientBackground />
 
       <button className="logout-button" onClick={handleLogout}>
         <IoLogOutOutline size={24} />

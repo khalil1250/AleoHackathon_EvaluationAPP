@@ -1,0 +1,105 @@
+body, html, #root {
+  margin: 0;
+  height: 100%;
+  background: #000;
+  font-family: sans-serif;
+}
+
+.container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.gradient-layer1, .gradient-layer2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.gradient-layer1 {
+  background: linear-gradient(135deg, #1F3B73, #2C5364, #0F2027);
+}
+
+.gradient-layer2 {
+  background: linear-gradient(135deg, #0F2027, #1F3B73, #2C5364);
+  opacity: 0;
+  transition: opacity 4s ease-in-out;
+}
+
+.logout-button, .back-button {
+  position: absolute;
+  top: 20px;
+  background-color: #e29834;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.logout-button {
+  right: 20px;
+}
+
+.back-button {
+  left: 20px;
+}
+
+.verifieur-input-container {
+  margin-top: 100px;
+  z-index: 1;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+}
+
+.verifieur-label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.verifieur-input {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #ffffff66;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  width: 250px;
+}
+
+.drop-area {
+  margin-top: 40px;
+  z-index: 1;
+  align-self: center;
+  border: 2px dashed #ffffff66;
+  padding: 30px; /* augmenter padding */
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  text-align: center;
+  color: white;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+
+  width: 1000px;      /* largeur fixe */
+  min-height: 400px; /* hauteur minimale */
+}
+
+.drop-area.active {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.drop-label {
+  font-size: 16px;
+  font-weight: bold;
+}

@@ -1,0 +1,131 @@
+.page {
+  padding: 2rem;
+  min-height: 100vh;
+  background: #fdfdfd;
+  color: #1a1a1a;
+  overflow-x: auto;
+  font-family: "Georgia", serif;
+  line-height: 1.6;
+}
+
+.title {
+  color: #287aa7;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #287aa7;
+  padding-bottom: 0.5rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.input,
+.select {
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #c0c0c0;
+  border-radius: 6px;
+  min-width: 180px;
+  background-color: #ffffff;
+  transition: border-color 0.2s;
+}
+
+.input:focus,
+.select:focus {
+  border-color: #287aa7;
+  outline: none;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f5f9fc;
+  color: #287aa7;
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+}
+
+.clickableRow {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clickableRow:hover {
+  background-color: #f2f7fb;
+}
+
+.badgeValid,
+.badgeInvalid {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 3px;
+}
+
+.badgeValid {
+  background-color: #28a745;
+}
+
+.badgeInvalid {
+  background-color: #dc3545;
+}
+
+.loader {
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #666;
+}
+
+.emptyRow {
+  text-align: center;
+  padding: 1rem;
+  color: #888;
+  font-style: italic;
+}
+
+.returnButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  background-color: rgba(165, 159, 159, 0.1);
+  border: 1px solid #b0b0b0;
+  border-radius: 10px;
+  color: #287aa7;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.returnButton:hover {
+  background-color: rgba(165, 159, 159, 0.2);
+  transform: scale(1.02);
+}

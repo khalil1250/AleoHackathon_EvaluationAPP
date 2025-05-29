@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Account } from '@provablehq/sdk';
 import './css/Inscription.css';
+import { IoArrowBackOutline } from 'react-icons/io5';
+import GradientBackground from './css/GradientBackground';
 import {deriveKey, encrypt, decrypt} from "../encrypt_decrypt.ts";
 import { supabase } from '../lib/supabase';
 import ConnexionIcon from '../assets/images/ConnexionIcon.png';
@@ -83,30 +85,33 @@ export default function Inscription() {
     }
   };
 
-  return (
-    <div className="container">
-      <div className="gradient-layer1" />
-      <div className="gradient-layer2" ref={fadeRef} />
+  const handleBack = () => navigate('/');
 
-      <div className="content">
-        <img src={ConnexionIcon} alt="Logo" className="logo" />
-        <h1 className="title">Créer un compte</h1>
+  return (
+    <div className="inscription-container">
+      <GradientBackground/>
+       <button className="back-button" onClick={handleBack}>
+              <IoArrowBackOutline size={24} />
+            </button>
+      <div className="inscription-content">
+        <img src={ConnexionIcon} alt="Logo" className="inscription-logo" />
+        <h1 className="inscription-title">Créer un compte</h1>
 
         <input
-          className="input"
+          className="inscription-input"
           placeholder="👤 Nom d'utilisateur"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <input
-          className="input"
+          className="inscription-input"
           type="password"
           placeholder="🔒 mot de passe"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="button" onClick={handleSignUp}>
+        <button className="inscription-button" onClick={handleSignUp}>
           S'inscrire
         </button>
       </div>
