@@ -5,6 +5,7 @@ import Acceuil from './pages/Acceuil';
 import Inscription from './pages/Inscription';
 import SendInfo from './pages/SendInfo';
 import SeeInfo from './pages/SeeInfo';
+import Account from './pages/Account';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/Acceuil" element={<Acceuil />} />
         <Route path="/Acceuil/SendInfo" element={<SendInfo />} />
         <Route path="/Acceuil/SeeInfo" element={<SeeInfo />} />
+        <Route path="/Acceuil/Account" element={<Account />} />
       </Routes>
     </Router>
   );

@@ -29,7 +29,7 @@ export default function Accueil() {
     { title: 'Send Info', onClick: () => {navigate("SendInfo")} },
     { title: 'See Info', onClick: () => {navigate("SeeInfo")} },
     { title: 'Evaluations', onClick: () => {} },
-    { title: 'Account', onClick: () => {} },
+    { title: 'Account', onClick: () => {navigate("Account")} },
   ];
 
   return (

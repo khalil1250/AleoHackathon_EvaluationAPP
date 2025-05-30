@@ -13,7 +13,7 @@ export default function SendInfo() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [hasEmetteurRole, setHasEmetteurRole] = useState(false);
+  //const [hasEmetteurRole, setHasEmetteurRole] = useState(false);
   const [verifieur, setVerifieur] = useState('');
 
 
@@ -21,14 +21,24 @@ export default function SendInfo() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const { data: companyid, error } = await supabase
+        const { data: company, error } = await supabase
           .from('users')
           .select('*')
           .eq('username', session.username)
           .single();
         ;
-        if (error || !companyid.company_id) {
-          alert("Utilisateur introuvable ou vous n'êtes pas associé à une entreprise");
+        if (error ) {
+          alert("Utilisateur introuvable");
+          navigate('/');
+          return;
+        }
+        if ( !company.company_id ) {
+          alert("Vous n'êtes pas associé à une entreprise");
+          navigate('/');
+          return;
+        }
+        if (!company.role_id ) {
+          alert("L'utilisateur n'a pas de rôle dans son entreprise (absurde)");
           navigate('/');
           return;
         }
@@ -44,35 +54,37 @@ export default function SendInfo() {
           return;
         }
 
-        const { data: roles, error: error2 } = await supabase
-          .from('user_for_role')
+        
+
+        const { data: getRole, error: error3 } = await supabase
+          .from('company_roles')
           .select('*')
-          .eq('username', session.username)
-          .eq('company_id', companyid.company_id)
+          .eq('role_id', company.role_id)
+          .eq('company_id', company.company_id)
           .single();
-        //console.log({"username":session.username, "compid": companyid.company_id });
-        if (error2 || !roles.role) {
-          alert('Rôle introuvable');
+        if (error3 || !getRole.role_name) {
+          alert('Rôle introuvable pour cette entreprise ou erreur base de donnée');
           navigate('/');
           return;
         }
 
+
         const fullUser = {
           username: session.username,
           password_hash: session.passwordHash,
-          company_id: companyid.company_id,
+          company_id: company.company_id,
           keys: {
             privateKey: keys.private_key,
             viewKey: keys.view_key,
             add: keys.address,
           },
-          role: roles.role,
+          role: getRole.role_name,
         };
 
         setUser(fullUser);
-        setHasEmetteurRole(fullUser.role === 'émetteur');
+        //setHasEmetteurRole(fullUser.role === 'émetteur');
 
-        if (fullUser.role !== 'émetteur') {
+        if (fullUser.role.toLowerCase() !== 'émetteur' && fullUser.role.toLowerCase() !== 'owner') {
           alert("Vous n'êtes pas un émetteur d'information pour votre entreprise.");
           navigate('/Acceuil');
         }
@@ -105,13 +117,13 @@ export default function SendInfo() {
 
   const handleFile = async (file: File) => {
     if (!user) return;
-    /*
-    console.log("Fichier reçu:", file);
-    console.log("userk", user.keys.viewKey);
-    console.log("Using password hash:", user.password_hash);
-    const {data} = await supabase.from("users").select("password_hash").eq("username", user.username).single();
-    console.log("eq", user.passwordHash === data.password_hash);
-    */
+    
+    //console.log("Fichier reçu:", file);
+    //console.log("userk", user.keys.viewKey);
+    //console.log("Using password hash:", user.password_hash);
+    //const {data} = await supabase.from("users").select("password_hash").eq("username", user.username).single();
+    //console.log("eq", user.passwordHash === data.password_hash);
+     
     
     const key = await deriveKey(user.username, user.password_hash);
     //console.log("key", key);
@@ -141,6 +153,7 @@ export default function SendInfo() {
       navigate("/");
       return;
     }
+    alert("Votre fichier a été ajouté avec succès !")
 };
 
 
@@ -154,10 +167,22 @@ export default function SendInfo() {
   };
 
   const handleBrowse = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    /*
     if (!hasEmetteurRole) {
       alert("Vous devez être émetteur dans l'entreprise.");
       return;
-    }
+    }*/
+    const { data: valid, error: error } = await supabase
+          .from('Validators')
+          .select('*')
+          .eq('username', verifieur)
+          .eq('company_id', user.company_id)
+          .single();
+    
+        if (error || !valid) {
+          alert("Ce valideur n'existe pas ou votre entreprise ne lui est pas associé");
+          return;
+      }
     const file = e.target.files?.[0];
     if (file) {
       await handleFile(file);
