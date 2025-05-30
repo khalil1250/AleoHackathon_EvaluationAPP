@@ -1,8 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { use, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/Accueil.css';
 import GradientBackground from './css/GradientBackground';
 import { IoLogOutOutline } from 'react-icons/io5'; // Ionicons équivalent
+import { useAleoWallet } from '../walletContext';
+import { WalletMultiButton } from '@demox-labs/aleo-wallet-adapter-reactui';
+import { useWallet } from '@demox-labs/aleo-wallet-adapter-react';
+
 
 export default function Accueil() {
   const fadeRef = useRef<HTMLDivElement>(null);
@@ -32,16 +36,24 @@ export default function Accueil() {
     { title: 'Account', onClick: () => {navigate("Account")} },
   ];
 
+  const {publicKey} = useAleoWallet();
+  if(!publicKey){
+    navigate("index");
+  }
+
+
   return (
       <div className="accueil-page">
     <div className="container">
-      <GradientBackground />
 
+
+      <GradientBackground />
       <button className="logout-button" onClick={handleLogout}>
         <IoLogOutOutline size={24} />
       </button>
 
       <div className="content">
+        <WalletMultiButton />
         {buttons.map((btn, idx) => (
           <button key={idx} className="main-button" onClick={btn.onClick}>
             {btn.title}

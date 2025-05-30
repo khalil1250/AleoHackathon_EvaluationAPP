@@ -12,12 +12,16 @@
     "install-leo": "./install.sh"
   },
   "dependencies": {
+    "@demox-labs/aleo-wallet-adapter-base": "^0.0.23",
+    "@demox-labs/aleo-wallet-adapter-leo": "^0.0.25",
+    "@demox-labs/aleo-wallet-adapter-react": "^0.0.22",
+    "@demox-labs/aleo-wallet-adapter-reactui": "^0.0.36",
     "@provablehq/sdk": "^0.8.8",
     "@supabase/supabase-js": "^2.49.8",
     "bcryptjs": "^3.0.2",
     "comlink": "^4.4.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.1",
     "terser-webpack-plugin": "^5.3.14"
