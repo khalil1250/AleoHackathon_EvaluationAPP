@@ -1,0 +1,101 @@
+.account-page {
+  margin: 0;
+  height: 100vh;
+  background: #000;
+  font-family: sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+.account-page .container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-page .gradient-layer1,
+.account-page .gradient-layer2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.account-page .gradient-layer1 {
+  background: linear-gradient(135deg, #1f3b73, #2c5364, #0f2027);
+}
+
+.account-page .gradient-layer2 {
+  background: linear-gradient(135deg, #0f2027, #1f3b73, #2c5364);
+  opacity: 0;
+  transition: opacity 4s ease-in-out;
+}
+
+.account-page .content {
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid #ffffff33;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+}
+ .logout-button .back-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #e29834;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.account-page .inputform {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ffffff66;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  outline: none;
+  transition: background-color 0.2s ease;
+}
+
+.account-page .inputform::placeholder {
+  color: #cccccc;
+}
+
+.account-page .inputform:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.account-page .valid {
+  width: 100%;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid #ffffff66;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.account-page .valid:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}

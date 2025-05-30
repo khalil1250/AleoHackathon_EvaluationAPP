@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase';
 import styles from './css/SeeInfo.module.css';
 
 type InfoRow = {
-  id: string;
+  information_id: string;
   information_name: string;
   created_at: string;
   valide: boolean;
@@ -40,7 +40,7 @@ export default function SeeInfo() {
       let q = supabase
         .from<InfoRow>('information')
         .select(`
-          id,
+          information_id,
           information_name,
           created_at,
           valide,
@@ -147,7 +147,7 @@ export default function SeeInfo() {
                 </tr>
               ) : (
                 rows.map(r => (
-                  <tr key={r.id} onClick={() => navigate(`/information/${r.id}`)} className={styles.clickableRow}>
+                  <tr key={r.information_id} onClick={() => navigate(`/information/${r.information_id}`)} className={styles.clickableRow}>
                     <td>{r.information_name}</td>
                     <td>{r.company?.name || '-'}</td>
                     <td>{r.company?.country || '-'}</td>
