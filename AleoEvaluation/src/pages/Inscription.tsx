@@ -14,6 +14,7 @@ export default function Inscription() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [key, setPublicKey] = useState('');
 
   useEffect(() => {
     let opacity = 0;
@@ -35,30 +36,31 @@ export default function Inscription() {
     }
 
     try {
+      const password_hash : string = await bcrypt.hash(password, 10);
+      /*
       const account = new Account();
       const privateKey = account.privateKey().to_string();
       const viewKey = account.viewKey().to_string();
-      const address = account.address().to_string();
-
-      const password_hash : string = await bcrypt.hash(password, 10);
+      const address = account.address().to_string();     
 
       const key = await deriveKey(username, password_hash);
+      
       const encryptedPrivateKey = await encrypt(privateKey, key);
       const encryptedViewKey = await encrypt(viewKey, key);
       const encryptedAddress = await encrypt(address, key);
 
       console.log('Encrypted keys:', { encryptedPrivateKey, encryptedViewKey, encryptedAddress });
-/*
+
       const decryptedPrivateKey = await decrypt(encryptedPrivateKey, key);
       const decryptedViewKey = await decrypt(encryptedViewKey, key);
       const decryptedAddress = await decrypt(encryptedAddress, key);
 
       console.log('Decrypted keys:', { decryptedPrivateKey, decryptedViewKey, decryptedAddress });
-*/
       
-      
+      */
+    
       const { error:error1 } = await supabase.from('users').insert([
-        { username: username.trim(), password_hash }
+        { username: username.trim(), password_hash , public_key:key}
       ]);
 
 
@@ -66,7 +68,7 @@ export default function Inscription() {
         alert('Erreur lors de la création du compte user.');
         return;
       }
-
+      /*
       const {error:error2} = await supabase.from('aleo_key').insert([
         { username: username.trim(), private_key : encryptedPrivateKey, view_key:encryptedViewKey, address:encryptedAddress }
       ]);
@@ -74,7 +76,7 @@ export default function Inscription() {
         alert('Erreur lors de la création du compte aleo.');
         return;
       }
-
+*/
       
 
       alert("Votre compte a été créé. Aller dans l'onglet compte pour compléter votre profil.");
@@ -109,6 +111,13 @@ export default function Inscription() {
           placeholder="🔒 mot de passe"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+        />
+        <input
+          className="inscription-input"
+          type="password"
+          placeholder="🔒 Votre clé de wallet aleo"
+          value={key}
+          onChange={(e) => setPublicKey(e.target.value)}
         />
 
         <button className="inscription-button" onClick={handleSignUp}>
