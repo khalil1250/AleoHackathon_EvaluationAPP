@@ -9,8 +9,17 @@ import { useWallet } from '@demox-labs/aleo-wallet-adapter-react';
 
 
 export default function Accueil() {
+
   const fadeRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  const { connected } = useWallet();
+
+  useEffect(() => {
+  if ( !connected ) {
+    navigate('/'); // redirige vers la page d’accueil Aleo
+  }
+  }, [connected]);
 
   useEffect(() => {
     let opacity = 0;
@@ -35,12 +44,6 @@ export default function Accueil() {
     { title: 'Evaluations', onClick: () => {} },
     { title: 'Account', onClick: () => {navigate("Account")} },
   ];
-
-  const {publicKey} = useAleoWallet();
-  if(!publicKey){
-    navigate("index");
-  }
-
 
   return (
       <div className="accueil-page">

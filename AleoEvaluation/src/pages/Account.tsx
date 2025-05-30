@@ -6,6 +6,12 @@ import GradientBackground from './css/GradientBackground';
 import { IoLogOutOutline, IoArrowBackOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
+import { useWallet } from '@demox-labs/aleo-wallet-adapter-react';
+import { WalletAdapterNetwork } from '@demox-labs/aleo-wallet-adapter-base';
+
+
+const docId = "je vais pas dormir"
+
 export default function Account() {
     const fadeRef = useRef<HTMLDivElement>(null);
     const [company_type, setCompanyType] = useState('');
@@ -166,47 +172,36 @@ export default function Account() {
         }
         
       }
-      const handleNewRole = async () => {
-        
-        const { data, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('username', username)
-            .single();
-        if (error) {
-            console.error('Erreur Supabase:', error.message);
-            alert("Error access or user not found");
-            return;
-        }
-        if (!data.company_id) {
-            alert("Vous n'êtes pas associé à une entreprise");
-            return;
-        }
-        const { data: data1, error:error1 } = await supabase
-            .from('company_roles')
-            .select('*')
-            .eq('company_id', data.company_id)
-            .eq("role_id", data.role_id)
-            .single();
-        if (error1 || !data1) {
-            console.error('Erreur Supabase:', error1);
-            alert("erreur supabase company_roles")
-            return;
-        }
-        if(data1.role_name !== "owner" && data1.role_name !== "gestionnaire"  ){
-            alert("Vous ne pouvez pas ajouter de rôles dans votre entreprise ( owner , gestionnaire )")
-            return;
-        }
-        const { error:error2 } = await supabase
-            .from('company_roles')
-            .insert([{ company_id: data.company_id, role_name:new_role.trim()} ])
-        if(error2){
-            alert("erreur lors de l'insertion du rôle -- existe-il déjà ?");
-            return;
-        }
-        alert("Le rôle a été ajouté");
+
+    
+    const [recipient, setRecipient] = useState('');
+    const [txStatus, setTxStatus] = useState('');
+    const { publicKey, requestTransaction } = useWallet();
+
+    const handleGrantPermission = async () => {
+      if (!publicKey || !recipient || !docId) {
+        setTxStatus('Veuillez remplir tous les champs');
+        return;
       }
 
+      try {
+        setTxStatus('Envoi du record en cours...');
+
+        const tx = await requestTransaction({
+          programId: 'permission_granter.aleo',
+          functionName: 'grant_permission',
+          fee: 1000000, // ajuster si besoin
+          inputs: [docId, recipient, publicKey.toString()],
+          network: WalletAdapterNetwork.TestnetBeta,
+        });
+
+        console.log('Transaction envoyée:', tx);
+        setTxStatus('Permission envoyée ✅');
+      } catch (error) {
+        console.error(error);
+        setTxStatus('Erreur lors de l\'envoi ❌');
+      }
+    };
 
 
     return (
@@ -257,15 +252,18 @@ export default function Account() {
         <button className="valid" onClick={handleNewUser}>
           Ajouter un utilisateur à l'entreprise
         </button>
+
         <input
           className="inputform"
-          placeholder="Rôle"
-          value={new_role}
+          placeholder="adress_validateur"
+          value={recipient}
           onChange={(e) => setNewRole(e.target.value)}
         />
-        <button className="valid" onClick={handleNewRole}>
-          Ajouter un rôle
+
+        <button className="valid" onClick={handleGrantPermission}>
+          Ajouter un validateur
         </button>
+
       </div>
     </div>
   </div>
