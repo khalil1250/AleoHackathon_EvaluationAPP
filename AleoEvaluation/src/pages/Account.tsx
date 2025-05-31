@@ -16,8 +16,9 @@ import { supabase } from '../lib/supabase';
 import CryptoJS from 'crypto-js';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 1. Helpers Web Crypto pour l’AES-GCM et PBKDF2 (inchangés)
+// 1. Helpers Web Crypto pour l’AES-GCM et PBKDF2
 // ─────────────────────────────────────────────────────────────────────────────
+
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
   let binary = "";
@@ -26,6 +27,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   }
   return window.btoa(binary);
 }
+
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary = window.atob(base64);
   const bytes = new Uint8Array(binary.length);
@@ -34,6 +36,7 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
   }
   return bytes.buffer;
 }
+
 async function generateAESKey(): Promise<CryptoKey> {
   return await window.crypto.subtle.generateKey(
     { name: "AES-GCM", length: 256 },
@@ -41,6 +44,7 @@ async function generateAESKey(): Promise<CryptoKey> {
     ["encrypt", "decrypt"]
   );
 }
+
 async function encryptObjectWithAES(jsonObj: any): Promise<{ ciphertextBase64: string; rawKey: CryptoKey }> {
   const aesKey = await generateAESKey();
   const encoder = new TextEncoder();
@@ -59,6 +63,7 @@ async function encryptObjectWithAES(jsonObj: any): Promise<{ ciphertextBase64: s
     rawKey: aesKey
   };
 }
+
 async function deriveKeyFromRecipient(recipient: string): Promise<CryptoKey> {
   const encoder = new TextEncoder();
   const passwordKey = await window.crypto.subtle.importKey(
@@ -84,6 +89,7 @@ async function deriveKeyFromRecipient(recipient: string): Promise<CryptoKey> {
   );
   return kek;
 }
+
 async function wrapAESKeyWithRecipient(rawAesKey: CryptoKey, recipient: string): Promise<string> {
   const kek = await deriveKeyFromRecipient(recipient);
   const rawKeyBuffer = await window.crypto.subtle.exportKey("raw", rawAesKey);
@@ -100,7 +106,7 @@ async function wrapAESKeyWithRecipient(rawAesKey: CryptoKey, recipient: string):
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 2. Composant React complet (modifié pour prendre le dernier id de "information")
+// 2. Composant React complet
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function Account() {
@@ -218,7 +224,7 @@ export default function Account() {
     }
   };
 
-  // ──────────── 2.4. Grant Permission Aleo (modifié pour récupérer doc_id) ────────────
+  // ──────────── 2.4. Grant Permission Aleo ────────────
   const handleGrantPermission = async () => {
     if (!publicKey) {
       setTxStatus("Wallet non connecté");
@@ -234,7 +240,7 @@ export default function Account() {
     }
 
     try {
-      // ─── 2.4.1. Récupérer le dernier id de la table `information` pour ce companyId ───
+      // 2.4.1. Récupérer le dernier id de la table `information`
       const { data: lastInfo, error: fetchInfoError } = await supabase
         .from('information')
         .select('id')
@@ -244,18 +250,16 @@ export default function Account() {
         .single();
 
       if (fetchInfoError || !lastInfo) {
-        console.error("Erreur lors de la récupération du dernier info.id :", fetchInfoError);
+        console.error("Erreur récupération dernier info.id :", fetchInfoError);
         alert("Impossible de récupérer l’ID du dernier document dans information.");
         return;
       }
 
-      // ─── 2.4.2. Transformer l'UUID en string et y ajouter "field" ───
-      //    lastInfo.id est un UUID, par ex. "123e4567-e89b-12d3-a456-426614174000"
-      const doc_id = lastInfo.id.toString() + "field"; 
-      //    ex. "123e4567-e89b-12d3-a456-426614174000field"
+      // 2.4.2. Ajouter "field" à cette UUID
+      const doc_id = lastInfo.id.toString() + "field";
 
-      // ─── 2.4.3. Construire et envoyer la transaction Aleo ───
-      const fee = 50_000; 
+      // 2.4.3. Construire et envoyer la transaction Aleo
+      const fee = 50_000;
       const tx = Transaction.createTransaction(
         publicKey,
         WalletAdapterNetwork.TestnetBeta,
@@ -281,7 +285,7 @@ export default function Account() {
     }
   };
 
-  // ──────────── 2.5. Chiffrement JSON + Wrap AES Key (inchangé) ────────────
+  // ──────────── 2.5. Chiffrement JSON + Wrap AES Key ────────────
   const handleFile = async (file: File) => {
     if (!companyId) {
       alert("Tu dois être associé à une entreprise avant d’envoyer un fichier.");
@@ -321,23 +325,36 @@ export default function Account() {
       const encryptionResult = await encryptObjectWithAES(jsonData);
       ciphertextBase64 = encryptionResult.ciphertextBase64;
       rawAesKey = encryptionResult.rawKey;
+      console.log("Chiffrement AES réussi (CryptoKey) :", rawAesKey);
     } catch (err) {
       console.error("Erreur chiffrement AES du JSON :", err);
       alert("Impossible de chiffrer le JSON.");
       return;
     }
 
-    
+    // 4bis) Exporter `rawAesKey` en ArrayBuffer = 32 octets,
+    //      puis en Base64 (= string)
+    let aesKeyRawBuffer: ArrayBuffer;
+    let aesKeyBase64: string;
+    try {
+      aesKeyRawBuffer = await window.crypto.subtle.exportKey("raw", rawAesKey);
+      aesKeyBase64 = arrayBufferToBase64(aesKeyRawBuffer);
+      console.log("Clé AES exportée en Base64 :", aesKeyBase64);
+    } catch (err) {
+      console.error("Erreur exportation de la clé AES :", err);
+      alert("Impossible d’exporter la clé AES.");
+      return;
+    }
 
-    // 6) Insérer dans Supabase
+    // 5) Insérer dans Supabase, en stockant `aesKeyBase64` (string) au lieu de CryptoKey
     const { error } = await supabase
       .from('information')
       .insert([
         {
           name: file.name,
-          cle_crypte: rawAesKey,             // Base64(iv2 ∥ ciphertext2)
+          cle_crypte: aesKeyBase64,   // on stocke la clé AES en Base64 (chaîne)
           company_id: companyId,
-          fichier_crypt: ciphertextBase64,    // Base64(iv ∥ ciphertext)
+          fichier_crypt: ciphertextBase64,
           created_at: new Date().toISOString()
         }
       ]);
@@ -372,7 +389,7 @@ export default function Account() {
     <div className="account-page">
       <div className="container">
         {/* Arrière-plan animé */}
-        <GradientBackground ref={fadeRef} />
+        <GradientBackground />
 
         {/* Boutons déconnexion / retour */}
         <button className="logout-button" onClick={handleLogout}>
