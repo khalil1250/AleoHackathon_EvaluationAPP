@@ -6,6 +6,8 @@ import Inscription from './pages/Inscription';
 import SendInfo from './pages/SendInfo';
 import SeeInfo from './pages/SeeInfo';
 import Account from './pages/Account';
+import Evaluate from './pages/Evaluate';
+
 
 import React, { FC, useMemo } from "react";
 import { WalletProvider } from "@demox-labs/aleo-wallet-adapter-react";
@@ -49,6 +51,7 @@ export default function App() {
           <Route path="/Acceuil/SendInfo" element={<SendInfo />} />
           <Route path="/Acceuil/SeeInfo" element={<SeeInfo />} />
           <Route path="/Acceuil/Account" element={<Account />} />
+           <Route path="/Acceuil/Evaluate" element={<Evaluate />} />
         </Routes>
       </Router>
       </WalletProviderContext>
@@ -56,3 +59,4 @@ export default function App() {
     </WalletProvider>
   );
 }
+Account

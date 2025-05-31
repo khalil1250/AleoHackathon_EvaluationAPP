@@ -389,7 +389,11 @@ export default function Account() {
     <div className="account-page">
       <div className="container">
         {/* Arrière-plan animé */}
+<<<<<<< HEAD
         <GradientBackground />
+=======
+        <GradientBackground/>
+>>>>>>> origin/deb_t
 
         {/* Boutons déconnexion / retour */}
         <button className="logout-button" onClick={handleLogout}>

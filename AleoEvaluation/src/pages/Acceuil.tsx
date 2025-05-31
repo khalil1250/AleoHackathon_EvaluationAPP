@@ -36,7 +36,7 @@ export default function Accueil() {
   const buttons = [
     { title: 'Send Info', onClick: () => {navigate("SendInfo")} },
     { title: 'See Info', onClick: () => {navigate("SeeInfo")} },
-    { title: 'Evaluations', onClick: () => {} },
+    { title: 'Evaluations', onClick: () => {navigate("Evaluate")} },
     { title: 'Account', onClick: () => {navigate("Account")} },
     { title : 'Validateur', onClick : () => {navigate("Inscription")}},
   ];
