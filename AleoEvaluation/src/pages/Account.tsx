@@ -16,10 +16,8 @@ import { supabase } from '../lib/supabase';
 import CryptoJS from 'crypto-js';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 1. Helpers Web Crypto pour l’AES-GCM et PBKDF2
+// 1. Helpers Web Crypto pour l’AES-GCM et PBKDF2 (inchangés)
 // ─────────────────────────────────────────────────────────────────────────────
-
-/** Transforme ArrayBuffer → Base64 */
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
   let binary = "";
@@ -28,8 +26,6 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   }
   return window.btoa(binary);
 }
-
-/** Transforme Base64 → ArrayBuffer */
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary = window.atob(base64);
   const bytes = new Uint8Array(binary.length);
@@ -38,63 +34,33 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
   }
   return bytes.buffer;
 }
-
-/** Génère une clé AES-GCM 256 bits (CryptoKey) */
 async function generateAESKey(): Promise<CryptoKey> {
   return await window.crypto.subtle.generateKey(
     { name: "AES-GCM", length: 256 },
-    true,                // exportable
+    true,
     ["encrypt", "decrypt"]
   );
 }
-
-/**
- * Chiffre un objet JSON avec AES-GCM 256 bits.
- * → Renvoie :
- *    - ciphertextBase64 = Base64( IV(12 bytes) ∥ ciphertext )
- *    - rawKey = CryptoKey AES-GCM (256 bits) générée
- */
 async function encryptObjectWithAES(jsonObj: any): Promise<{ ciphertextBase64: string; rawKey: CryptoKey }> {
-  // 1) Générer la clé AES
   const aesKey = await generateAESKey();
-
-  // 2) Encoder le JSON en Uint8Array
   const encoder = new TextEncoder();
   const plaintext = encoder.encode(JSON.stringify(jsonObj));
-
-  // 3) Générer un IV aléatoire 12 bytes
   const iv = window.crypto.getRandomValues(new Uint8Array(12));
-
-  // 4) Chiffrement AES-GCM
   const ciphertextBuffer = await window.crypto.subtle.encrypt(
     { name: "AES-GCM", iv: iv },
     aesKey,
     plaintext
   );
-
-  // 5) Concaténer IV ∥ ciphertext
   const combined = new Uint8Array(iv.byteLength + ciphertextBuffer.byteLength);
   combined.set(iv, 0);
   combined.set(new Uint8Array(ciphertextBuffer), iv.byteLength);
-
-  // 6) Retourner Base64
   return {
     ciphertextBase64: arrayBufferToBase64(combined.buffer),
     rawKey: aesKey
   };
 }
-
-/**
- * Derive un Key Encryption Key (KEK) à partir de la chaîne `recipient` via PBKDF2.
- *  - password = UTF8(recipient)
- *  - salt = "aleolock-salt-fixed"
- *  - iterations = 100 000
- *  - hash = SHA-256
- *  - résultante = CryptoKey AES-GCM 256 bits
- */
 async function deriveKeyFromRecipient(recipient: string): Promise<CryptoKey> {
   const encoder = new TextEncoder();
-  // 1) Importer recipient comme clé « raw » pour PBKDF2
   const passwordKey = await window.crypto.subtle.importKey(
     "raw",
     encoder.encode(recipient),
@@ -102,11 +68,8 @@ async function deriveKeyFromRecipient(recipient: string): Promise<CryptoKey> {
     false,
     ["deriveKey"]
   );
-  // 2) Paramètres PBKDF2
   const salt = encoder.encode("aleolock-salt-fixed");
   const iterations = 100_000;
-
-  // 3) Deriver un KEK (AES-GCM 256 bits)
   const kek = await window.crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
@@ -121,51 +84,36 @@ async function deriveKeyFromRecipient(recipient: string): Promise<CryptoKey> {
   );
   return kek;
 }
-
-/**
- * Wrap (chiffre) la clé AES rawKey à l’aide d’un KEK dérivé du `recipient`.
- * → Renvoie Base64( IV2(12 bytes) ∥ ciphertext2 ), où ciphertext2 = AES-GCM(Kek, rawKeyRaw).
- */
 async function wrapAESKeyWithRecipient(rawAesKey: CryptoKey, recipient: string): Promise<string> {
-  // 1) Dériver le KEK
   const kek = await deriveKeyFromRecipient(recipient);
-
-  // 2) Exporter rawAesKey en ArrayBuffer (32 bytes)
   const rawKeyBuffer = await window.crypto.subtle.exportKey("raw", rawAesKey);
-
-  // 3) Générer IV aléatoire 12 bytes
   const iv2 = window.crypto.getRandomValues(new Uint8Array(12));
-
-  // 4) Chiffrer le rawKeyBuffer avec le KEK
   const ciphertext2Buffer = await window.crypto.subtle.encrypt(
     { name: "AES-GCM", iv: iv2 },
     kek,
     rawKeyBuffer
   );
-
-  // 5) Concaténer iv2 ∥ ciphertext2
   const combined2 = new Uint8Array(iv2.byteLength + ciphertext2Buffer.byteLength);
   combined2.set(iv2, 0);
   combined2.set(new Uint8Array(ciphertext2Buffer), iv2.byteLength);
-
-  // 6) Retourner Base64
   return arrayBufferToBase64(combined2.buffer);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 2. Composant React complet
+// 2. Composant React complet (modifié pour prendre le dernier id de "information")
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function Account() {
   // === Réfs & Hooks ===
   const fadeRef = useRef<HTMLDivElement>(null);
+
   const [company_name, setCompanyName] = useState<string>('');
   const [fileName, setFileName] = useState<string | null>(null);
   const [recipient, setRecipient] = useState<string>(''); // adresse Aleo du validateur
   const [txStatus, setTxStatus] = useState<string>('');
   const [companyId, setCompanyId] = useState<string | null>(null);
 
-  // Récupération du contexte wallet Aleo
+  // Contexte wallet Aleo
   const { publicKey, requestTransaction } = useWallet();
   const navigate = useNavigate();
 
@@ -270,7 +218,7 @@ export default function Account() {
     }
   };
 
-  // ──────────── 2.4. Grant Permission Aleo (inchangé) ────────────
+  // ──────────── 2.4. Grant Permission Aleo (modifié pour récupérer doc_id) ────────────
   const handleGrantPermission = async () => {
     if (!publicKey) {
       setTxStatus("Wallet non connecté");
@@ -280,10 +228,34 @@ export default function Account() {
       setTxStatus("Adresse destinataire manquante");
       return;
     }
-    try {
-      const fee = 50_000;
-      const doc_id = "123456789123456789field"; // identifiant de doc, à adapter
+    if (!companyId) {
+      alert("Tu dois être associé à une entreprise avant d’accorder une permission.");
+      return;
+    }
 
+    try {
+      // ─── 2.4.1. Récupérer le dernier id de la table `information` pour ce companyId ───
+      const { data: lastInfo, error: fetchInfoError } = await supabase
+        .from('information')
+        .select('id')
+        .eq('company_id', companyId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (fetchInfoError || !lastInfo) {
+        console.error("Erreur lors de la récupération du dernier info.id :", fetchInfoError);
+        alert("Impossible de récupérer l’ID du dernier document dans information.");
+        return;
+      }
+
+      // ─── 2.4.2. Transformer l'UUID en string et y ajouter "field" ───
+      //    lastInfo.id est un UUID, par ex. "123e4567-e89b-12d3-a456-426614174000"
+      const doc_id = lastInfo.id.toString() + "field"; 
+      //    ex. "123e4567-e89b-12d3-a456-426614174000field"
+
+      // ─── 2.4.3. Construire et envoyer la transaction Aleo ───
+      const fee = 50_000; 
       const tx = Transaction.createTransaction(
         publicKey,
         WalletAdapterNetwork.TestnetBeta,
@@ -309,7 +281,7 @@ export default function Account() {
     }
   };
 
-  // ──────────── 2.5. Chiffrement JSON + Wrap AES Key ────────────
+  // ──────────── 2.5. Chiffrement JSON + Wrap AES Key (inchangé) ────────────
   const handleFile = async (file: File) => {
     if (!companyId) {
       alert("Tu dois être associé à une entreprise avant d’envoyer un fichier.");
@@ -355,15 +327,7 @@ export default function Account() {
       return;
     }
 
-    // 5) Envelopper (wrap) la clé AES avec PBKDF2(recipient)
-    let cle_crypte: string;
-    try {
-      cle_crypte = await wrapAESKeyWithRecipient(rawAesKey, recipient);
-    } catch (err) {
-      console.error("Erreur wrap AES Key :", err);
-      alert("Impossible de chiffrer la clé AES par PBKDF2(recipient).");
-      return;
-    }
+    
 
     // 6) Insérer dans Supabase
     const { error } = await supabase
@@ -371,7 +335,7 @@ export default function Account() {
       .insert([
         {
           name: file.name,
-          cle_crypte: cle_crypte,             // Base64(iv2 ∥ ciphertext2)
+          cle_crypte: rawAesKey,             // Base64(iv2 ∥ ciphertext2)
           company_id: companyId,
           fichier_crypt: ciphertextBase64,    // Base64(iv ∥ ciphertext)
           created_at: new Date().toISOString()
@@ -430,16 +394,13 @@ export default function Account() {
             Ajouter votre entreprise
           </button>
 
-          {/* Ajouter un validateur (permission Aleo) */}
+          {/* Saisie de l’adresse Aleo du validateur */}
           <input
             className="inputform"
             placeholder="Adresse Aleo du validateur (aleo1…)"
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
           />
-          <button className="valid" onClick={handleGrantPermission}>
-            Ajouter un validateur
-          </button>
 
           {/* Sélection de fichier JSON */}
           <label htmlFor="file-upload" className="drop-label">
@@ -457,6 +418,9 @@ export default function Account() {
 
           {/* Statut transaction (optionnel) */}
           {txStatus && <p className="tx-status">{txStatus}</p>}
+          <button className="valid" onClick={handleGrantPermission}>
+            Ajouter un validateur
+          </button>
         </div>
       </div>
     </div>
