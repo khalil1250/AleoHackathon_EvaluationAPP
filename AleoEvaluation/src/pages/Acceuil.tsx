@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import './css/Accueil.css';
 import GradientBackground from './css/GradientBackground';
 import { IoLogOutOutline } from 'react-icons/io5'; // Ionicons équivalent
-import { useAleoWallet } from '../walletContext';
 import { WalletMultiButton } from '@demox-labs/aleo-wallet-adapter-reactui';
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react';
 
@@ -43,6 +42,7 @@ export default function Accueil() {
     { title: 'See Info', onClick: () => {navigate("SeeInfo")} },
     { title: 'Evaluations', onClick: () => {} },
     { title: 'Account', onClick: () => {navigate("Account")} },
+    { title : 'Validateur', onClick : () => {navigate("Inscription")}},
   ];
 
   return (
@@ -51,9 +51,6 @@ export default function Accueil() {
 
 
       <GradientBackground />
-      <button className="logout-button" onClick={handleLogout}>
-        <IoLogOutOutline size={24} />
-      </button>
 
       <div className="content">
         <WalletMultiButton />

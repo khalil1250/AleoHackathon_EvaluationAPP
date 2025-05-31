@@ -44,8 +44,8 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/Inscription" element={<Inscription />} />
           <Route path="/Acceuil" element={<Acceuil />} />
+          <Route path="/Acceuil/Inscription" element={<Inscription />} />
           <Route path="/Acceuil/SendInfo" element={<SendInfo />} />
           <Route path="/Acceuil/SeeInfo" element={<SeeInfo />} />
           <Route path="/Acceuil/Account" element={<Account />} />
