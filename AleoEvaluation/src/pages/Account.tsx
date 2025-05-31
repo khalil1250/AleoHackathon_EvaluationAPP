@@ -408,7 +408,7 @@ export default function Account() {
     <div className="account-page">
       <div className="container">
         {/* Arrière-plan animé */}
-        <GradientBackground ref={fadeRef} />
+        <GradientBackground/>
 
         {/* Boutons déconnexion / retour */}
         <button className="logout-button" onClick={handleLogout}>
