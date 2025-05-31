@@ -33,10 +33,6 @@ export default function Accueil() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogout = () => {
-    navigate('/');
-  };
-
   const buttons = [
     { title: 'Send Info', onClick: () => {navigate("SendInfo")} },
     { title: 'See Info', onClick: () => {navigate("SeeInfo")} },

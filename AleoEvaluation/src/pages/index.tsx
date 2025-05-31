@@ -9,8 +9,7 @@ export default function Index() {
   const navigate = useNavigate();
 
   const handleuser = async() => {
-      const walletAddress = publicKey?.toString().trim();
-      if (!walletAddress) return;
+      const walletAddress = publicKey?.toString();
 
 
       // Vérifie si l'utilisateur existe déjà
@@ -30,7 +29,7 @@ export default function Index() {
       if (!existingUser) {
         const { error: insertError } = await supabase.from('Users').insert([
           {
-            address: walletAddress
+            address: walletAddress,
           }
         ]);
 

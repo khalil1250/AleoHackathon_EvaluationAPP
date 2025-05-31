@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabase';
 import './css/Account.css';
 import GradientBackground from './css/GradientBackground';
 import { IoLogOutOutline, IoArrowBackOutline } from 'react-icons/io5';
@@ -12,7 +11,7 @@ import {
   WalletNotConnectedError
 } from "@demox-labs/aleo-wallet-adapter-base";
 
-
+import { supabase } from '../lib/supabase';
 
 
 export default function Account() {
@@ -25,18 +24,7 @@ export default function Account() {
     const [txStatus, setTxStatus] = useState('');
     const { publicKey, requestTransaction } = useWallet();
 
-    useEffect(() => {
-        let opacity = 0;
-        let direction = 1;
-        const interval = setInterval(() => {
-          if (fadeRef.current) {
-            fadeRef.current.style.opacity = String(opacity);
-          }
-          opacity += direction * 0.01;
-          if (opacity >= 1 || opacity <= 0) direction *= -1;
-        }, 40);
-        return () => clearInterval(interval);
-      }, []);
+    
 
     const handleLogout = () => {
         navigate('/');
@@ -49,20 +37,19 @@ export default function Account() {
 
     const handleCompany = async () => {
         try{
-            const walletAddress = publicKey?.toString().trim();
+            const walletAddress = publicKey?.toString();
             const { data, error } = await supabase
-                .from('Users')
-                .select('*')
-                .eq('address', walletAddress)
-                .single();
-
-            console.log(data);
+              .from('Users')
+              .select('*')
+              .eq('address', walletAddress)
+              .single();
 
             if (error) {
                 console.error('Erreur Supabase:', error.message);
                 alert("Error recup info");
                 return;
             }
+
             //Pour créer une entreprise la compagyId du user doit etre nul
             if(!data.company_id){
                 const {error:error1} = await supabase.from('company').insert([
@@ -77,11 +64,13 @@ export default function Account() {
                     return;
                 }
 
-                const { data : CompanyData, error : ErrorCompany} = await supabase
+                console.log(data.id);
+
+                const { data: CompanyData, error: ErrorCompany } = await supabase
                     .from('company')
                     .select('*')
                     .eq('owner_id', data.id)
-                    .single();
+                    .single()
 
                 if (ErrorCompany) {
                     console.error('Erreur Supabase:', ErrorCompany.message);
@@ -107,13 +96,24 @@ export default function Account() {
                 alert("Vous êtes déjà associé à une entreprise");
             }
 
-
-                
             }catch{
 
 
         }
       };
+
+    useEffect(() => {
+        let opacity = 0;
+        let direction = 1;
+        const interval = setInterval(() => {
+          if (fadeRef.current) {
+            fadeRef.current.style.opacity = String(opacity);
+          }
+          opacity += direction * 0.01;
+          if (opacity >= 1 || opacity <= 0) direction *= -1;
+        }, 40);
+        return () => clearInterval(interval);
+      }, []);
 
 
     //Code Censé envoyer un token permission a un autre user.
@@ -137,7 +137,7 @@ export default function Account() {
         WalletAdapterNetwork.TestnetBeta, 
         'permission_granthack.aleo',     // ton programme .aleo
         'grant_permission',            // ta fonction Aleo
-        [doc_id, recipient, publicKey.toString()], // les 3 inputs
+        [doc_id, publicKey.toString(), recipient], // les 3 inputs
         fee, 
         false
       );
@@ -190,6 +190,8 @@ export default function Account() {
         <button className="valid" onClick={handleGrantPermission}>
           Ajouter un validateur
         </button>
+
+        
 
       </div>
     </div>

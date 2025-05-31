@@ -17,11 +17,9 @@ export default function Inscription() {
     if (requestRecords) {
       const records = await requestRecords(program);
       console.log("Records bruts:", records);
-      const docIds = records
-        .filter(r => r.value && r.value.doc_id !== undefined)
-        .map(r => r.value.doc_id);
-      console.log("Tous les doc_id:", docIds);
+      
 }
+
   };
   return (
     <div className="account-page">
