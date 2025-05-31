@@ -20,6 +20,7 @@
     "@supabase/supabase-js": "^2.49.8",
     "bcryptjs": "^3.0.2",
     "comlink": "^4.4.2",
+    "crypto-js": "^4.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
