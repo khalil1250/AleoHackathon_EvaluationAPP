@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import styles from './css/SeeInfo.module.css';
+import {generateLeoProgramFromJson} from "../leo_information_code_generation.ts";
+import { encrypt, deriveKey, decrypt } from '../encrypt_decrypt';
+import { session } from '../lib/session';
 
 type InfoRow = {
   information_id: string;
@@ -21,6 +24,74 @@ type SortColumn =
   | 'valide';
 
 export default function SeeInfo() {
+
+  const generateLeoProgram  = async (information_id: string, information_name: string) => {
+  const { data: company, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', session.username)
+        .single();
+      ;
+    if (error ) {
+        alert("Utilisateur introuvable");
+        navigate('/');
+        return;
+    }
+    if ( !company.company_id ) {
+        alert("Vous n'êtes pas associé à une entreprise");
+        navigate('/');
+        return;
+      }
+    if (!company.role_id ) {
+        alert("L'utilisateur n'a pas de rôle dans son entreprise (absurde)");
+        navigate('/');
+        return;
+    }
+      //console.log(session.username, session.passwordHash);
+
+      const { data: getRole, error: error3 } = await supabase
+        .from('company_roles')
+        .select('*')
+        .eq('role_id', company.role_id)
+        .eq('company_id', company.company_id)
+        .single();
+    if (error3 || !getRole.role_name) {
+        alert('Rôle introuvable pour cette entreprise ou erreur base de donnée');
+        navigate('/');
+        return;
+    }
+    if (getRole.role_name.toLowerCase() !== 'émetteur' && getRole.role_name.toLowerCase() !== 'owner' && getRole.role_name.toLowerCase() !== 'developer' ) {
+        alert("Vous n'êtes pas un émetteur d'information on-chain pour votre entreprise.");
+        navigate('/Acceuil');
+        return;
+    }
+    
+    const {data, error:error4} = await supabase
+    .from("information").select("*").eq("information_id", information_id).single();
+    if(error4||!data){
+      alert("erreur de recuperation de l'information");
+      return;
+    }
+    if(!data.valide){
+      alert("Cette information n'est pas validée. Aucun smart contract n'est donc disponible.");
+      return;
+    }
+    const jsonString = data.information;
+    //console.log( session.username, session.passwordHash);
+    const key = await deriveKey(session.username! , session.passwordHash!);
+    const informationString = await decrypt(jsonString, key);
+    //console.log(informationString);
+    await fetch('http://localhost:3001/generate-leo', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    jsonString: informationString,
+    companyId: data.company_id,
+    baseName: information_name
+  })
+});
+  alert("Création du code aleo...");
+  }
   const navigate = useNavigate();
   const [rows, setRows] = useState<InfoRow[]>([]);
   const [loading, setLoading] = useState(false);
@@ -147,19 +218,26 @@ export default function SeeInfo() {
                 </tr>
               ) : (
                 rows.map(r => (
-                  <tr key={r.information_id} onClick={() => navigate(`/information/${r.information_id}`)} className={styles.clickableRow}>
-                    <td>{r.information_name}</td>
-                    <td>{r.company?.name || '-'}</td>
-                    <td>{r.company?.country || '-'}</td>
-                    <td>{r.company?.company_type || '-'}</td>
-                    <td>{new Date(r.created_at).toLocaleDateString()}</td>
-                    <td>
-                      <span
-                        title={r.valide ? 'Valide' : 'Invalide'}
-                        className={r.valide ? styles.badgeValid : styles.badgeInvalid}
-                      />
-                    </td>
-                  </tr>
+                  <tr key={r.information_id} className={styles.clickableRow}>
+  <td>
+    <button
+      className={styles.infoButton}
+      onClick={() => generateLeoProgram(r.information_id, r.information_name)}
+    >
+      {r.information_name}
+    </button>
+  </td>
+  <td>{r.company?.name || '-'}</td>
+  <td>{r.company?.country || '-'}</td>
+  <td>{r.company?.company_type || '-'}</td>
+  <td>{new Date(r.created_at).toLocaleDateString()}</td>
+  <td>
+    <span
+      title={r.valide ? 'Valide' : 'Invalide'}
+      className={r.valide ? styles.badgeValid : styles.badgeInvalid}
+    />
+  </td>
+</tr>
                 ))
               )}
             </tbody>

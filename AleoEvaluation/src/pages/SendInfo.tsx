@@ -5,7 +5,7 @@ import './css/SendInfo.css';
 import GradientBackground from './css/GradientBackground';
 import { session } from '../lib/session';
 import { supabase } from '../lib/supabase';
-import { encryptWithViewKey, deriveKey, decrypt } from '../encrypt_decrypt';
+import { encrypt, deriveKey, decrypt } from '../encrypt_decrypt';
 
 export default function SendInfo() {
   const navigate = useNavigate();
@@ -42,17 +42,8 @@ export default function SendInfo() {
           navigate('/');
           return;
         }
-        const { data: keys, error: error1 } = await supabase
-          .from('aleo_key')
-          .select('*')
-          .eq('username', session.username)
-          .single();
-
-        if (error1 || !keys) {
-          alert('Clés Aleo introuvables');
-          navigate('/');
-          return;
-        }
+        //console.log(session.username, session.passwordHash);
+    
 
         
 
@@ -73,11 +64,6 @@ export default function SendInfo() {
           username: session.username,
           password_hash: session.passwordHash,
           company_id: company.company_id,
-          keys: {
-            privateKey: keys.private_key,
-            viewKey: keys.view_key,
-            add: keys.address,
-          },
           role: getRole.role_name,
         };
 
@@ -127,15 +113,18 @@ export default function SendInfo() {
     
     const key = await deriveKey(user.username, user.password_hash);
     //console.log("key", key);
-    const decrypted_viewK = await decrypt(user.keys.viewKey, key);
+    //const decrypted_viewK = await decrypt(user.keys.viewKey, key);
     //console.log("decryptedVK", decrypted_viewK);
     const content = await file.text();
     //console.log("content", content);
-    const encrypted = await encryptWithViewKey(content, decrypted_viewK);
+    const encrypted = await encrypt(content, key);
     //console.log("encrypted", encrypted);
+    //const decrypted = await decrypt(encrypted, key);
+
     setFileName(file.name);
 
-    //console.log('Encrypted content:', encrypted);
+    console.log('Encrypted content:', encrypted);
+    //console.log('Decrypted content:', decrypted);
 
     const { error } = await supabase
       .from("information")
@@ -153,7 +142,12 @@ export default function SendInfo() {
       navigate("/");
       return;
     }
-    alert("Votre fichier a été ajouté avec succès !")
+    /*
+    const {data:elo} = await supabase.from("information").select("*").eq("information_name", file.name).single();
+    const decrypted = await decrypt(elo.information, key);
+    console.log(decrypted);
+    */
+    alert("Votre fichier a été ajouté avec succès.")
 };
 
 
