@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react';
 import { useNavigate } from 'react-router-dom';
 import { WalletMultiButton } from '@demox-labs/aleo-wallet-adapter-reactui';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase';;
+import './css/Accueil.css';
+import GradientBackground from './css/GradientBackground';
 
 export default function Index() {
   const { publicKey, connected } = useWallet();
@@ -54,9 +56,12 @@ export default function Index() {
 
   return (
     <div className="index-page">
+      <GradientBackground />
       <div className="container">
+        <div className="content">
         <h1>Connecte ton wallet Aleo</h1>
         <WalletMultiButton />
+      </div>
       </div>
     </div>
   );

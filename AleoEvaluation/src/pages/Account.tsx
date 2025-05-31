@@ -13,7 +13,7 @@ import {
 } from "@demox-labs/aleo-wallet-adapter-base";
 
 import { supabase } from '../lib/supabase';
-import CryptoJS from 'crypto-js';
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. Helpers Web Crypto pour l’AES-GCM et PBKDF2
@@ -28,6 +28,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return window.btoa(binary);
 }
 
+<<<<<<< HEAD
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary = window.atob(base64);
   const bytes = new Uint8Array(binary.length);
@@ -36,6 +37,8 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
   }
   return bytes.buffer;
 }
+=======
+>>>>>>> origin/deb_t
 
 async function generateAESKey(): Promise<CryptoKey> {
   return await window.crypto.subtle.generateKey(
