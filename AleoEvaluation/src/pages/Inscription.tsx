@@ -1,6 +1,10 @@
 // src/pages/Inscription.tsx
 
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
+=======
+import { useState, useEffect} from "react";
+>>>>>>> origin/deb_t
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
 import {
@@ -10,9 +14,15 @@ import {
 import { supabase } from "../lib/supabase";
 import { Transaction } from "@demox-labs/aleo-wallet-adapter-base";
 
+<<<<<<< HEAD
 import GradientBackground from "./css/GradientBackground";
 import "./css/Account.css";
 import { IoArrowBackOutline } from "react-icons/io5";
+=======
+import GradientBackground from './css/GradientBackground';
+import './css/Account.css';
+import {IoArrowBackOutline } from 'react-icons/io5';
+>>>>>>> origin/deb_t
 
 /** ───────────── Helpers Web Crypto ───────────── */
 

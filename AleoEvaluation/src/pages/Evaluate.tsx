@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabase';
-
+import { useEffect } from 'react';
 
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react';
-import { WalletAdapterNetwork } from '@demox-labs/aleo-wallet-adapter-base';
 import {
-  Transaction,
   WalletNotConnectedError
 } from "@demox-labs/aleo-wallet-adapter-base";
 import { useNavigate } from 'react-router-dom';
 import './css/Accueil.css';
 import GradientBackground from './css/GradientBackground';
+import {IoArrowBackOutline } from 'react-icons/io5';
 
 
 export default function Evaluate(){
@@ -39,12 +36,20 @@ export default function Evaluate(){
 
     }
     };
+
+     const handleBack = () => {
+    navigate('/Acceuil');
+  };
    
     return(
         <div className="accueil-page">
           
         <div className="container ">
           <GradientBackground />
+
+          <button className="back-button" onClick={handleBack}>
+                    <IoArrowBackOutline size={24} />
+                  </button>
         <div className="content ">
           
         <button className="main-button" onClick={handleLaunchEval}>
