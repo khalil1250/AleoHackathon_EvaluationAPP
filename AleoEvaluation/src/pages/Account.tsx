@@ -28,15 +28,6 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return window.btoa(binary);
 }
 
-function base64ToArrayBuffer(base64: string): ArrayBuffer {
-  const binary = window.atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
-
 async function generateAESKey(): Promise<CryptoKey> {
   return await window.crypto.subtle.generateKey(
     { name: "AES-GCM", length: 256 },
@@ -64,46 +55,7 @@ async function encryptObjectWithAES(jsonObj: any): Promise<{ ciphertextBase64: s
   };
 }
 
-async function deriveKeyFromRecipient(recipient: string): Promise<CryptoKey> {
-  const encoder = new TextEncoder();
-  const passwordKey = await window.crypto.subtle.importKey(
-    "raw",
-    encoder.encode(recipient),
-    { name: "PBKDF2" },
-    false,
-    ["deriveKey"]
-  );
-  const salt = encoder.encode("aleolock-salt-fixed");
-  const iterations = 100_000;
-  const kek = await window.crypto.subtle.deriveKey(
-    {
-      name: "PBKDF2",
-      salt: salt,
-      iterations: iterations,
-      hash: "SHA-256"
-    },
-    passwordKey,
-    { name: "AES-GCM", length: 256 },
-    true,
-    ["encrypt", "decrypt"]
-  );
-  return kek;
-}
 
-async function wrapAESKeyWithRecipient(rawAesKey: CryptoKey, recipient: string): Promise<string> {
-  const kek = await deriveKeyFromRecipient(recipient);
-  const rawKeyBuffer = await window.crypto.subtle.exportKey("raw", rawAesKey);
-  const iv2 = window.crypto.getRandomValues(new Uint8Array(12));
-  const ciphertext2Buffer = await window.crypto.subtle.encrypt(
-    { name: "AES-GCM", iv: iv2 },
-    kek,
-    rawKeyBuffer
-  );
-  const combined2 = new Uint8Array(iv2.byteLength + ciphertext2Buffer.byteLength);
-  combined2.set(iv2, 0);
-  combined2.set(new Uint8Array(ciphertext2Buffer), iv2.byteLength);
-  return arrayBufferToBase64(combined2.buffer);
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. Composant React complet
@@ -378,9 +330,7 @@ export default function Account() {
   };
 
   // ──────────── 2.7. Logout & Back ────────────
-  const handleLogout = () => {
-    navigate('/');
-  };
+
   const handleBack = () => {
     navigate('/Acceuil');
   };
@@ -392,9 +342,7 @@ export default function Account() {
         <GradientBackground/>
 
         {/* Boutons déconnexion / retour */}
-        <button className="logout-button" onClick={handleLogout}>
-          <IoLogOutOutline size={24} />
-        </button>
+
         <button className="back-button" onClick={handleBack}>
           <IoArrowBackOutline size={24} />
         </button>

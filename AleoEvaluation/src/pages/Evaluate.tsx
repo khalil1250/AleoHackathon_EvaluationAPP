@@ -9,13 +9,14 @@ import {
   WalletNotConnectedError
 } from "@demox-labs/aleo-wallet-adapter-base";
 import { useNavigate } from 'react-router-dom';
-
-
+import './css/Accueil.css';
+import GradientBackground from './css/GradientBackground';
 
 
 export default function Evaluate(){
 
     const { publicKey, connected , requestRecords} = useWallet();
+    
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,13 +41,18 @@ export default function Evaluate(){
     };
    
     return(
-        <div className="account-page">
+        <div className="accueil-page">
+          
+        <div className="container ">
+          <GradientBackground />
         <div className="content ">
-        <button className="valid" onClick={handleLaunchEval}>
+          
+        <button className="main-button" onClick={handleLaunchEval}>
             Récuperer des infos
         </button>
         
         </div>
+      </div>
       </div>
     );
 }

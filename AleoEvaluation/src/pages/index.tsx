@@ -55,11 +55,10 @@ export default function Index() {
   }, [connected, publicKey]);
 
   return (
-    <div className="index-page">
-      <GradientBackground />
+    <div className="accueil-page">
       <div className="container">
+        <GradientBackground />
         <div className="content">
-        <h1>Connecte ton wallet Aleo</h1>
         <WalletMultiButton />
       </div>
       </div>

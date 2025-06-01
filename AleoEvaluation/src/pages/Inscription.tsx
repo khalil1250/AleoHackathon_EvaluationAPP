@@ -1,10 +1,17 @@
 // src/pages/Inscription.tsx
 
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
-import { WalletNotConnectedError } from "@demox-labs/aleo-wallet-adapter-base";
+import { WalletNotConnectedError, WalletAdapterNetwork} from "@demox-labs/aleo-wallet-adapter-base";
 import { supabase } from "../lib/supabase";
+import {
+  Transaction
+} from "@demox-labs/aleo-wallet-adapter-base";
+
+import GradientBackground from './css/GradientBackground';
+import './css/Account.css';
+import { IoLogOutOutline, IoArrowBackOutline } from 'react-icons/io5';
 
 /** ───────────── Helpers Web Crypto ───────────── */
 
@@ -91,9 +98,13 @@ function sortRecordsByNumericDocIdDesc<T extends { data: { doc_id: string } }>(
 
 /** ───────────── Composant Inscription ───────────── */
 export default function Inscription() {
-  const { publicKey, requestRecords } = useWallet();
+  const { publicKey, connected,requestRecords, requestTransaction } = useWallet();
   // docIdWithSuffix contiendra par exemple "12345field.private"
   const [docIdWithSuffix, setDocIdWithSuffix] = useState<string>("");
+  const [txStatus, setTxStatus] = useState<string>('');
+  const [recipient, setRecipient] = useState<string>(''); // adresse Aleo du hedge_funds
+  const [args1, setargs1] = useState<string>(''); // adresse Aleo du hedge_funds
+  const [args2, setargs2] = useState<string>(''); // adresse Aleo du hedge_funds
   const navigate = useNavigate();
 
   /**
@@ -241,15 +252,90 @@ export default function Inscription() {
     alert("Ce record a été validé avec succès !");
   };
 
+  const handleShareResult = async () => {
+      if (!publicKey) {
+        setTxStatus("Wallet non connecté");
+        console.log("nooo")
+        throw new WalletNotConnectedError();
+
+      }
+
+      const fee = 50_000;
+      const tx = Transaction.createTransaction(
+        publicKey,
+        WalletAdapterNetwork.TestnetBeta,
+        'share_results.aleo',
+        'calcul_event',
+        [args1, args2, recipient, publicKey.toString()],
+        fee,
+        false
+      );
+
+
+      if (!requestTransaction) {
+        console.log("error");
+        setTxStatus("Impossible d'envoyer la transaction : fonction manquante");
+        return;
+      }
+
+      setTxStatus("Envoi de la transaction en cours...");
+      const result = await requestTransaction(tx);
+      console.log('Résultat transaction :', result);
+      setTxStatus("✅ Permission envoyée !");
+
+    };
+
+  useEffect(() => {
+    if ( !connected ) {
+      navigate('/'); // redirige vers la page d’accueil Aleo
+    }
+    }, [connected]);
+  const handleBack = () => {
+    navigate('/Acceuil');
+  };
+
   return (
     <div className="account-page">
-      <div className="content">
-        <button onClick={askRecords} disabled={!publicKey}>
+      <div className="container">
+        <GradientBackground/>
+        <button className="back-button" onClick={handleBack}>
+                  <IoArrowBackOutline size={24} />
+              </button>
+        
+        <div className="content">
+
+        <button className="valid" onClick={askRecords} disabled={!publicKey}>
           Request Records et Déchiffrer
         </button>
-        <button onClick={handleValidate} disabled={!publicKey || !docIdWithSuffix}>
+        <button className="valid" onClick={handleValidate} disabled={!publicKey || !docIdWithSuffix}>
           Validate The Data
         </button>
+
+        <input
+            className="inputform"
+            placeholder="Adresse du hedge_funds"
+            value={recipient}
+            onChange={(e) => setRecipient(e.target.value)}
+          />
+
+        <input
+            className="inputform"
+            placeholder="args1"
+            value={args1}
+            onChange={(e) => setargs1(e.target.value)}
+          />
+
+          <input
+            className="inputform"
+            placeholder="args2"
+            value={args2}
+            onChange={(e) => setargs2(e.target.value)}
+          />
+
+        <button className="valid" onClick={handleShareResult}>
+          Sharedata
+        </button>
+        </div>
       </div>
     </div>
   );
