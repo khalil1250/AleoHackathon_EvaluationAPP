@@ -14,6 +14,8 @@ export default function Inscription() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
   const [key, setPublicKey] = useState('');
 
   useEffect(() => {
@@ -29,11 +31,38 @@ export default function Inscription() {
     return () => clearInterval(interval);
   }, []);
 
+  const validatePassword = (pwd: string) => {
+  const minLength = /.{8,}/;
+  const specialChar = /[!@#$%^&*(),.?":{}|<>]/;
+  const digit = /\d/;
+
+  if (!minLength.test(pwd)) {
+    return 'Le mot de passe doit contenir au moins 8 caractères.';
+  }
+  if (!specialChar.test(pwd)) {
+    return 'Le mot de passe doit contenir au moins un caractère spécial.';
+  }
+  if (!digit.test(pwd)) {
+    return 'Le mot de passe doit contenir au moins un chiffre.';
+  }
+
+  return '';
+};
+
+
   const handleSignUp = async () => {
     if (!username || !password) {
       alert('Veuillez remplir tous les champs.');
       return;
     }
+
+    const error = validatePassword(password);
+  if (error) {
+    setPasswordError(error);
+    return;
+  } else {
+    setPasswordError('');
+  }
 
     try {
       const password_hash : string = await bcrypt.hash(password, 10);
@@ -108,10 +137,13 @@ export default function Inscription() {
         <input
           className="inscription-input"
           type="password"
-          placeholder="🔒 mot de passe"
+          placeholder="🔒 mot de passe (1 caractère special, 1 majuscule, 1 chiffre)"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+          {passwordError && (
+            <p className="password-error-message">{passwordError}</p>
+          )}
         <input
           className="inscription-input"
           type="password"
