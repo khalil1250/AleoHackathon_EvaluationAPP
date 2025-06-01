@@ -87,7 +87,7 @@ function formatLeoValue(key: string, value: unknown): string {
 /**
  * Infers Leo-compatible types from JavaScript values.
  */
-function inferLeoType(value: unknown): 'bool' | 'u32' | 'u64' | 'i32' | 'i64' | 'Float' | 'field' | '[field, 4]' {
+function inferLeoType(value: unknown): 'bool' | 'u32' | 'u64' | 'i32' | 'i64' | 'Float' | 'field' | '[field; 4]' {
   if (typeof value === 'boolean' || value === 'true' || value === 'false') {
     return 'bool';
   }
@@ -104,7 +104,7 @@ function inferLeoType(value: unknown): 'bool' | 'u32' | 'u64' | 'i32' | 'i64' | 
     }
   }
 
-  return '[field, 4]';
+  return '[field; 4]';
 }
 
 
@@ -268,7 +268,7 @@ record Information {
     info : ${structName},
     is_float : is_Float,
     is_string: is_String,
-    fieldsName : [field, 32u8],
+    fieldsName : [field; 32u8],
 }
 
 transition emit_info(private receiver: address) -> Information { 
