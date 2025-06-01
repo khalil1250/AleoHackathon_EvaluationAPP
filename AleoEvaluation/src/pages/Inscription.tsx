@@ -1,21 +1,23 @@
 // src/pages/Inscription.tsx
 
-import { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
-import { WalletNotConnectedError, WalletAdapterNetwork} from "@demox-labs/aleo-wallet-adapter-base";
-import { supabase } from "../lib/supabase";
 import {
-  Transaction
+  WalletNotConnectedError,
+  WalletAdapterNetwork,
 } from "@demox-labs/aleo-wallet-adapter-base";
+import { supabase } from "../lib/supabase";
+import { Transaction } from "@demox-labs/aleo-wallet-adapter-base";
 
-import GradientBackground from './css/GradientBackground';
-import './css/Account.css';
-import {IoArrowBackOutline } from 'react-icons/io5';
+import GradientBackground from "./css/GradientBackground";
+import "./css/Account.css";
+import "./css/Accueil.css";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 /** ───────────── Helpers Web Crypto ───────────── */
 
-/** Transforme une chaîne Base64 en ArrayBuffer. */
+/** Transforme Base64 → ArrayBuffer */
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary = window.atob(base64);
   const bytes = new Uint8Array(binary.length);
@@ -25,7 +27,7 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
   return bytes.buffer;
 }
 
-/** Importe un ArrayBuffer (32 octets) en CryptoKey AES-GCM 256 bits pour le décryptage. */
+/** Import CryptoKey AES-GCM 256 bits */
 async function importAesKeyFromRaw(rawKeyBuffer: ArrayBuffer): Promise<CryptoKey> {
   return await window.crypto.subtle.importKey(
     "raw",
@@ -36,41 +38,26 @@ async function importAesKeyFromRaw(rawKeyBuffer: ArrayBuffer): Promise<CryptoKey
   );
 }
 
-/**
- * Déchiffre un ciphertext AES-GCM encodé en Base64 (IV (12 octets) ∥ ciphertext).
- * @param ciphertextBase64  Base64(IV∥ciphertext)
- * @param aesKey            CryptoKey AES-GCM pour décryptage
- * @returns                 Chaîne UTF-8 (JSON) en clair
- */
+/** Déchiffre AES-GCM(IV∥ciphertext) encodé en Base64 → string JSON */
 async function decryptAesGcmFromBase64(
   ciphertextBase64: string,
   aesKey: CryptoKey
 ): Promise<string> {
-  // 1) Convertir Base64 en ArrayBuffer
   const combinedBuffer = base64ToArrayBuffer(ciphertextBase64);
   const combinedBytes = new Uint8Array(combinedBuffer);
-
-  // 2) Extraire l’IV (12 octets) et le ciphertext (le reste)
   const iv = combinedBytes.slice(0, 12);
   const ciphertextBytes = combinedBytes.slice(12);
 
-  // 3) Déchiffrer avec AES-GCM
   const plaintextBuffer = await window.crypto.subtle.decrypt(
     { name: "AES-GCM", iv },
     aesKey,
     ciphertextBytes.buffer
   );
 
-  // 4) Convertir ArrayBuffer en chaîne UTF-8
-  const decoder = new TextDecoder();
-  return decoder.decode(plaintextBuffer);
+  return new TextDecoder().decode(plaintextBuffer);
 }
 
-/**
- * Extrait la partie numérique d'un doc_id de la forme "12345field.private".
- * @param docId  Chaîne commençant par chiffres (avant "field.private")
- * @returns      BigInt de la partie numérique, sinon 0n
- */
+/** Extrait la partie numérique d’un doc_id comme "12345field.private" → 12345n */
 function extractNumericDocId(docId: string): bigint {
   const match = /^(\d+)/.exec(docId);
   if (!match) return 0n;
@@ -81,9 +68,7 @@ function extractNumericDocId(docId: string): bigint {
   }
 }
 
-/**
- * Trie un tableau de records par data.doc_id (partie numérique) en ordre décroissant.
- */
+/** Trie un tableau de records par data.doc_id (numérique) décroissant */
 function sortRecordsByNumericDocIdDesc<T extends { data: { doc_id: string } }>(
   records: T[]
 ): T[] {
@@ -98,109 +83,151 @@ function sortRecordsByNumericDocIdDesc<T extends { data: { doc_id: string } }>(
 
 /** ───────────── Composant Inscription ───────────── */
 export default function Inscription() {
-  const { publicKey, connected,requestRecords, requestTransaction } = useWallet();
-  // docIdWithSuffix contiendra par exemple "12345field.private"
+  const { publicKey, connected, requestRecords, requestTransaction } = useWallet();
   const [docIdWithSuffix, setDocIdWithSuffix] = useState<string>("");
-  const [txStatus, setTxStatus] = useState<string>('');
-  const [recipient, setRecipient] = useState<string>(''); // adresse Aleo du hedge_funds
-  const [args1, setargs1] = useState<string>(''); // adresse Aleo du hedge_funds
-  const [args2, setargs2] = useState<string>(''); // adresse Aleo du hedge_funds
+  const [txStatus, setTxStatus] = useState<string>("");
+  const [recipient, setRecipient] = useState<string>("");
+  const [args1, setArgs1] = useState<string>("");
+  const [args2, setArgs2] = useState<string>("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!connected) {
+      navigate("/"); // renvoie à l'accueil si le wallet n'est pas connecté
+    }
+  }, [connected, navigate]);
 
   /**
    * 1. Récupère les records du programme Aleo,
-   * 2. Les trie en décroissant par data.doc_id numérique,
-   * 3. Affiche le résultat trié dans la console,
-   * 4. Déchiffre le JSON du premier record.
+   * 2. Trie décroissant par data.doc_id numérique,
+   * 3. Déchiffre le JSON du premier record,
+   * 4. Télécharge directement ce JSON.
    */
   const askRecords = async () => {
-    const program = "permission_granthack.aleo";
-    if (!publicKey) throw new WalletNotConnectedError();
+    if (!publicKey) {
+      alert("Veuillez connecter votre wallet Aleo.");
+      throw new WalletNotConnectedError();
+    }
     if (!requestRecords) {
       console.error("La fonction requestRecords n'est pas disponible.");
       return;
     }
 
-    // 1) Récupérer tous les records du programme
-    const records = await requestRecords(program);
-    console.log("Records bruts :", records);
+    try {
+      const program = "permission_granthack.aleo";
 
-    // 2) Trier en décroissant selon data.doc_id numérique
-    const triDesc = sortRecordsByNumericDocIdDesc(records as any);
-    console.log("Records triés (décroissant) :", triDesc);
+      // 1) Récupérer tous les records
+      const records = await requestRecords(program);
+      console.log("Records bruts :", records);
 
-    // 3) Prendre le premier doc_id trié (par ex. "12345field.private")
-    const firstDocId = triDesc[0]?.data?.doc_id ?? "";
-    if (!firstDocId) {
-      console.warn("Aucun doc_id trouvé dans les records.");
-      return;
+      if (!records || records.length === 0) {
+        alert("Aucun token trouvé pour ce programme.");
+        return;
+      }
+
+      // 2) Trier décroissant par data.doc_id
+      const triDesc = sortRecordsByNumericDocIdDesc(records as any);
+      console.log("Records triés (décroissant) :", triDesc);
+
+      // 3) Prendre le premier doc_id
+      const firstDocId = triDesc[0]?.data?.doc_id ?? "";
+      if (!firstDocId) {
+        alert("Impossible de récupérer le dernier token.");
+        return;
+      }
+      console.log("Premier doc_id après tri :", firstDocId);
+      setDocIdWithSuffix(firstDocId);
+
+      // 4) Déchiffrer et retourner l'objet JSON
+      const decryptedObj = await handleRecord(firstDocId);
+      if (decryptedObj) {
+        // 5) Créer un Blob et déclencher le téléchargement automatique
+        const jsonString = JSON.stringify(decryptedObj, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `token-${firstDocId.replace(/field\.private$/, "")}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    } catch (err) {
+      console.error("Erreur durant askRecords :", err);
+      alert("Une erreur est survenue lors de la récupération du token.");
     }
-    console.log("Premier doc_id après tri :", firstDocId);
-    setDocIdWithSuffix(firstDocId);
-
-    // 4) Récupérer la ligne Supabase et déchiffrer
-    await handleRecord(firstDocId);
   };
 
   /**
-   * 2. Récupère la ligne "information" pour docIdWithSuffix,
-   *    déchiffre fichier_crypt avec cle_crypte, et log le JSON.
+   * Récupère la ligne Supabase pour docIdWithSuffix,
+   * déchiffre fichier_crypt avec cle_crypte, retourne l’objet JSON.
+   * Téléchargement possible même si `valide === true`.
    */
-  const handleRecord = async (docIdWithSuffix: string) => {
+  const handleRecord = async (docIdWithSuffix: string): Promise<object | null> => {
     try {
-      // 1) Supprime "field.private" si nécessaire
+      // Supprime "field.private" si présent
       let pureIdStr = docIdWithSuffix;
       if (pureIdStr.endsWith("field.private")) {
         pureIdStr = pureIdStr.replace(/field\.private$/, "");
       }
-      console.log("ID sans suffixe (pour SELECT) :", pureIdStr);
+      console.log("ID sans suffixe (SELECT) :", pureIdStr);
 
-      // 2) Récupérer la ligne correspondante de Supabase
+      // Récupérer la ligne Supabase
       const { data: infoRow, error: fetchError } = await supabase
         .from("information")
         .select("fichier_crypt, cle_crypte, valide")
         .eq("id", pureIdStr)
         .maybeSingle();
 
-      console.log("clés récupérées:", infoRow);
+      console.log("Clés récupérées :", infoRow);
       if (fetchError) {
         console.error("Erreur Supabase (fetch ligne) :", fetchError.message);
-        return;
+        return null;
       }
       if (!infoRow) {
-        console.warn(`Aucune entrée "information" pour id = ${pureIdStr}`);
-        return;
+        console.warn(`Aucune entrée "information" pour id=${pureIdStr}`);
+        return null;
       }
 
-      const { fichier_crypt, cle_crypte } = infoRow;
+      const { fichier_crypt, cle_crypte, valide } = infoRow;
       if (!fichier_crypt || !cle_crypte) {
-        console.warn("Les champs fichier_crypt ou cle_crypte sont vides.");
-        return;
+        console.warn("Champs cryptés manquants.");
+        return null;
       }
 
-      // 3) Importer la clé AES (Base64 → ArrayBuffer → CryptoKey)
+      // Note : même si valide === true, on poursuit pour permettre le téléchargement
+      if (valide) {
+        console.log("Le token est déjà validé, mais le JSON sera tout de même téléchargé.");
+      }
+
+      // Importer la clé AES
       const rawKeyBuffer = base64ToArrayBuffer(cle_crypte);
       const aesKey = await importAesKeyFromRaw(rawKeyBuffer);
 
-      // 4) Déchiffrer le JSON
+      // Déchiffrer le JSON
       const jsonString = await decryptAesGcmFromBase64(fichier_crypt, aesKey);
 
       let jsonObj;
       try {
         jsonObj = JSON.parse(jsonString);
       } catch (e) {
-        console.error("Le texte déchiffré n'est pas un JSON valide :", e);
-        return;
+        console.error("Le texte déchiffré n’est pas un JSON valide :", e);
+        alert("Le contenu déchiffré n’est pas un JSON valide.");
+        return null;
       }
+
       console.log("JSON déchiffré pour doc_id =", docIdWithSuffix, ":", jsonObj);
+      return jsonObj;
     } catch (err) {
       console.error("Erreur dans handleRecord :", err);
+      alert("Erreur lors du déchiffrement.");
+      return null;
     }
   };
 
   /**
-   * 3. Met à jour la colonne `valide` à `true` dans la table information
-   *    pour la ligne dont l’id numérique (sans suffixe) correspond.
+   * Met à jour `valide = true` dans Supabase, si besoin.
    */
   const handleValidate = async () => {
     if (!docIdWithSuffix) {
@@ -208,14 +235,13 @@ export default function Inscription() {
       return;
     }
 
-    // 1) Supprime "field.private" si présent
     let pureIdStr = docIdWithSuffix;
     if (pureIdStr.endsWith("field.private")) {
       pureIdStr = pureIdStr.replace(/field\.private$/, "");
     }
-    console.log("ID sans suffixe (pour UPDATE) :", pureIdStr);
+    console.log("ID sans suffixe (UPDATE) :", pureIdStr);
 
-    // 2) Récupérer d'abord le champ 'valide' pour vérifier s’il est déjà true
+    // Vérifier `valide`
     const { data: existingRow, error: fetchError } = await supabase
       .from("information")
       .select("valide")
@@ -224,20 +250,20 @@ export default function Inscription() {
 
     if (fetchError) {
       console.error("Erreur Supabase (fetch pour validate) :", fetchError.message);
+      alert("Erreur lors de la vérification en base.");
       return;
     }
     if (!existingRow) {
-      console.warn(`Aucune entrée "information" pour id = ${pureIdStr}`);
+      alert(`Aucune entrée "information" pour id=${pureIdStr}`);
       return;
     }
 
-    // 3) Si déjà validée, afficher un message
     if (existingRow.valide) {
       alert("Information déjà validée");
       return;
     }
 
-    // 4) Sinon, mettre à jour le champ 'valide' à true
+    // Mettre à jour `valide`
     const { error: updateError } = await supabase
       .from("information")
       .update({ valide: true })
@@ -252,89 +278,91 @@ export default function Inscription() {
     alert("Ce record a été validé avec succès !");
   };
 
+  /**
+   * Effectue une transaction Aleo “share_results.aleo::calcul_event”
+   */
   const handleShareResult = async () => {
-      if (!publicKey) {
-        setTxStatus("Wallet non connecté");
-        console.log("nooo")
-        throw new WalletNotConnectedError();
-
-      }
-
-      const fee = 50_000;
-      const tx = Transaction.createTransaction(
-        publicKey,
-        WalletAdapterNetwork.TestnetBeta,
-        'share_results.aleo',
-        'calcul_event',
-        [args1, args2, recipient, publicKey.toString()],
-        fee,
-        false
-      );
-
-
-      if (!requestTransaction) {
-        console.log("error");
-        setTxStatus("Impossible d'envoyer la transaction : fonction manquante");
-        return;
-      }
-
-      setTxStatus("Envoi de la transaction en cours...");
-      const result = await requestTransaction(tx);
-      console.log('Résultat transaction :', result);
-      setTxStatus("✅ Permission envoyée !");
-
-    };
-
-  useEffect(() => {
-    if ( !connected ) {
-      navigate('/'); // redirige vers la page d’accueil Aleo
+    if (!publicKey) {
+      setTxStatus("Wallet non connecté");
+      throw new WalletNotConnectedError();
     }
-    }, [connected]);
-  const handleBack = () => {
-    navigate('/Acceuil');
+
+    const fee = 50_000;
+    const tx = Transaction.createTransaction(
+      publicKey,
+      WalletAdapterNetwork.TestnetBeta,
+      "share_results.aleo",
+      "calcul_event",
+      [args1, args2, recipient, publicKey.toString()],
+      fee,
+      false
+    );
+
+    if (!requestTransaction) {
+      setTxStatus("Impossible d'envoyer la transaction : fonction manquante");
+      return;
+    }
+
+    setTxStatus("Envoi de la transaction en cours…");
+    const result = await requestTransaction(tx);
+    console.log("Résultat transaction :", result);
+    setTxStatus("✅ Permission envoyée !");
   };
+
+  const handleBack = () => {
+    navigate("/Acceuil");
+  };
+
+
+
 
   return (
     <div className="account-page">
       <div className="container">
-        <GradientBackground/>
+        <GradientBackground />
         <button className="back-button" onClick={handleBack}>
-                  <IoArrowBackOutline size={24} />
-              </button>
-        
+          <IoArrowBackOutline size={24} />
+        </button>
+
         <div className="content">
-
-        <button className="valid" onClick={askRecords} disabled={!publicKey}>
-          Request Records et Déchiffrer
+          <button className="back-button" onClick={handleBack}>
+          <IoArrowBackOutline size={24} />
         </button>
-        <button className="valid" onClick={handleValidate} disabled={!publicKey || !docIdWithSuffix}>
-          Validate The Data
-        </button>
+          <button className="valid" onClick={askRecords} disabled={!publicKey}>
+            Request Records et Déchiffrer
+          </button>
+          <button
+            className="valid"
+            onClick={handleValidate}
+            disabled={!publicKey || !docIdWithSuffix}
+          >
+            Validate The Data
+          </button>
 
-        <input
+          <input
             className="inputform"
             placeholder="Adresse du hedge_funds"
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
           />
-
-        <input
+          <input
             className="inputform"
             placeholder="args1"
             value={args1}
-            onChange={(e) => setargs1(e.target.value)}
+            onChange={(e) => setArgs1(e.target.value)}
           />
-
           <input
             className="inputform"
             placeholder="args2"
             value={args2}
-            onChange={(e) => setargs2(e.target.value)}
+            onChange={(e) => setArgs2(e.target.value)}
           />
 
-        <button className="valid" onClick={handleShareResult}>
-          Sharedata
-        </button>
+          <button className="valid" onClick={handleShareResult}>
+            Sharedata
+          </button>
+
+          {txStatus && <p className="tx-status">{txStatus}</p>}
         </div>
       </div>
     </div>
