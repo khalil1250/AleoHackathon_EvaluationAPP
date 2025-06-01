@@ -1,8 +1,7 @@
-import React, { use, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/Accueil.css';
 import GradientBackground from './css/GradientBackground';
-import { IoLogOutOutline } from 'react-icons/io5'; // Ionicons équivalent
 import { WalletMultiButton } from '@demox-labs/aleo-wallet-adapter-reactui';
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react';
 

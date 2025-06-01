@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Index from './pages/index';
 import Acceuil from './pages/Acceuil';
 import Inscription from './pages/Inscription';
-import SendInfo from './pages/SendInfo';
-import SeeInfo from './pages/SeeInfo';
 import Account from './pages/Account';
 import Evaluate from './pages/Evaluate';
 
@@ -48,8 +46,6 @@ export default function App() {
           <Route path="/" element={<Index />} />
           <Route path="/Acceuil" element={<Acceuil />} />
           <Route path="/Acceuil/Inscription" element={<Inscription />} />
-          <Route path="/Acceuil/SendInfo" element={<SendInfo />} />
-          <Route path="/Acceuil/SeeInfo" element={<SeeInfo />} />
           <Route path="/Acceuil/Account" element={<Account />} />
            <Route path="/Acceuil/Evaluate" element={<Evaluate />} />
         </Routes>

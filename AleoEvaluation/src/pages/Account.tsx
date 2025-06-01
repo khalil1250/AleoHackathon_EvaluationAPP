@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './css/Account.css';
 import GradientBackground from './css/GradientBackground';
-import { IoLogOutOutline, IoArrowBackOutline } from 'react-icons/io5';
+import { IoArrowBackOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 import { useWallet } from '@demox-labs/aleo-wallet-adapter-react';

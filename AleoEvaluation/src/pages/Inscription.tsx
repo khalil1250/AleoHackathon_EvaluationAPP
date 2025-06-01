@@ -1,6 +1,6 @@
 // src/pages/Inscription.tsx
 
-import React, { useState, useEffect} from "react";
+import { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@demox-labs/aleo-wallet-adapter-react";
 import { WalletNotConnectedError, WalletAdapterNetwork} from "@demox-labs/aleo-wallet-adapter-base";
@@ -11,7 +11,7 @@ import {
 
 import GradientBackground from './css/GradientBackground';
 import './css/Account.css';
-import { IoLogOutOutline, IoArrowBackOutline } from 'react-icons/io5';
+import {IoArrowBackOutline } from 'react-icons/io5';
 
 /** ───────────── Helpers Web Crypto ───────────── */
 
